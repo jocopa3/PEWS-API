@@ -5,6 +5,7 @@
  */
 package mcpews;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mcpews.logger.LogLevel;
+import mcpews.message.ListenerRequest;
 import mcpews.message.MCCommand;
 import mcpews.message.MCMessage;
 import mcpews.message.MessagePurposeType;
@@ -78,17 +80,17 @@ public class MCSocketServer extends WebSocketServer {
         }
 
         MCMessage mess;
-        MCMessage request = null;
+        ListenerRequest request = null;
 
         MCClient client = clients.get(conn);
 
         try {
             JsonObject messageJson = parser.parse(message).getAsJsonObject();
+            JsonObject headerJson = messageJson.get("header").getAsJsonObject();
 
             // Parse enough of the message to get the purpose
             MessagePurposeType purpose = MessagePurposeType.fromString(
-                    messageJson.get("header").getAsJsonObject()
-                    .get("messagePurpose").getAsString());
+                    headerJson.get("messagePurpose").getAsString());
 
             if (purpose == MessagePurposeType.COMMAND_RESPONSE) {
                 // Parse enough of the message to get the requestId
@@ -96,17 +98,33 @@ public class MCSocketServer extends WebSocketServer {
                         .get("requestId").getAsString());
                 request = client.getRequestByUUID(requestId);
 
-                if (request != null && request.getBody() instanceof MCCommand) {
+                MCMessage requestMessage = request.getRequestMessage();
+
+                if (requestMessage != null && purpose == MessagePurposeType.COMMAND_RESPONSE && requestMessage.getBody() instanceof MCCommand) {
                     // Add a tip to the deserializer about what command triggered the response
                     JsonObject body = messageJson.get("body").getAsJsonObject();
+                    JsonElement statusCodeJson = body.get("statusCode");
                     
-                    body.addProperty(ResponseSerializer.PROPERTY_HINT_COMMAND,
-                            ((MCCommand) request.getBody()).getName());
-                    body.addProperty(ResponseSerializer.PROPERTY_HINT_OVERLOAD,
-                            ((MCCommand) request.getBody()).getOverload());
+                    if (statusCodeJson != null) {
+                        int statusCode = statusCodeJson.getAsInt();
+
+                        if (statusCode == 0) {
+                            body.addProperty(ResponseSerializer.PROPERTY_HINT_COMMAND,
+                                    ((MCCommand) requestMessage.getBody()).getName());
+                            body.addProperty(ResponseSerializer.PROPERTY_HINT_OVERLOAD,
+                                    ((MCCommand) requestMessage.getBody()).getOverload());
+                        } else {
+                            headerJson.addProperty("messagePurpose", "error");
+                        }
+                    }
                 } else {
                     throw new Exception("Response with no corresponding request");
                 }
+            } else if (purpose == MessagePurposeType.ERROR) {
+                UUID requestId = UUID.fromString(messageJson.get("header").getAsJsonObject()
+                        .get("requestId").getAsString());
+
+                request = client.getRequestByUUID(requestId);
             }
 
             mess = MCMessage.getAsMessage(messageJson);
@@ -122,25 +140,39 @@ public class MCSocketServer extends WebSocketServer {
             return;
         }
 
-        messageLogger.log(LogLevel.DEBUG, "Recieved message: {0}", message);
+        System.out.println(message);
 
-        switch (mess.getPurpose()) {
-            case EVENT:
-                for (MCListener l : listeners) {
-                    l.onEvent(client, mess);
-                }
-                break;
-            case COMMAND_RESPONSE:
-
-                for (MCListener l : listeners) {
-                    l.onResponse(client, mess, request);
-                }
-                break;
-            case ERROR:
-                for (MCListener l : listeners) {
-                    l.onError(client, mess, request);
-                }
-                break;
+        // If the request was made by a specific listener, send the response directly to it
+        if (request != null && request.getRequestor() != null) {
+            switch (mess.getPurpose()) {
+                case EVENT:
+                    request.getRequestor().onEvent(client, mess);
+                    break;
+                case COMMAND_RESPONSE:
+                    request.getRequestor().onResponse(client, mess, request.getRequestMessage());
+                    break;
+                case ERROR:
+                    request.getRequestor().onError(client, mess, request.getRequestMessage());
+                    break;
+            }
+        } else {
+            switch (mess.getPurpose()) {
+                case EVENT:
+                    for (MCListener l : listeners) {
+                        l.onEvent(client, mess);
+                    }
+                    break;
+                case COMMAND_RESPONSE:
+                    for (MCListener l : listeners) {
+                        l.onResponse(client, mess, request.getRequestMessage());
+                    }
+                    break;
+                case ERROR:
+                    for (MCListener l : listeners) {
+                        l.onError(client, mess, request.getRequestMessage());
+                    }
+                    break;
+            }
         }
     }
 
@@ -157,7 +189,7 @@ public class MCSocketServer extends WebSocketServer {
                     messageLogger.log(Level.INFO, "Client {0} forcibly quit.", clientAddress);
                 }
             } else {
-                messageLogger.log(Level.SEVERE, "An error occured on connection {0}: {1}",
+                messageLogger.log(LogLevel.DEBUG, "An error occured on connection {0}: {1}",
                         new Object[]{clientAddress, ex});
             }
 
@@ -171,7 +203,7 @@ public class MCSocketServer extends WebSocketServer {
                 return;
             }
 
-            messageLogger.log(Level.SEVERE, "An error occured: {0}", new Object[]{ex});
+            messageLogger.log(LogLevel.DEBUG, "An error occured: {0}", new Object[]{ex});
             ex.printStackTrace();
         }
     }

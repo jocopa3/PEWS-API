@@ -8,10 +8,12 @@ package mcpews.listeners;
 import mcpews.*;
 import java.awt.Color;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,6 +29,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import mcpews.command.CommandType;
 import mcpews.command.ListCommand;
 import mcpews.command.SayCommand;
 import mcpews.event.*;
@@ -296,7 +299,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
     private void inputTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTextFieldKeyPressed
         switch (evt.getKeyCode()) {
             case 10:
-                sendMessageToAll(inputTextField.getText());
+                parseChatInput(inputTextField.getText());
                 inputTextField.setText("");
                 break;
             default:
@@ -346,12 +349,78 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         textLogger.filter(filter);
     }//GEN-LAST:event_logWarningsCheckBoxActionPerformed
 
-    protected void sendMessageToAll(String message) {
+    private void parseChatInput(String input) {
+        if (input.startsWith("/")) { // Send command message
+            CommandType command = CommandType.fromChatString(input);
+
+            // Inform the user if the command name is invalid
+            if (command == null) {
+                server.getLog().log(LogLevel.INFO, "Unknown command: {0}", input);
+                return;
+            }
+
+            // Parameters should store all string parameters following the /command input
+            // Possible bug when typing a space between '/' and the command name like: / summon tnt
+            String[] parameters = input.replaceFirst("/" + command.getName(), "").split(" ");
+
+            MCCommand commandRequest = null;
+
+            // Get all constructors and loop through them
+            // Try to initialize the command object using each constructor
+            Class commandClass = command.getRequestClass();
+            Constructor[] constructors = commandClass.getConstructors();
+
+            for (Constructor constructor : constructors) {
+                Class[] params = constructor.getParameterTypes();
+                int paramIndx = 0;
+
+                Object[] objects = new Object[params.length];
+
+                // Try to create each object in the constructor by passing the parameter strings
+                try {
+                    for (Class paramType : params) {
+                        objects[paramIndx] = paramType.getConstructor(String.class).newInstance(parameters[paramIndx + 1]);
+                        paramIndx++;
+                    }
+
+                    commandRequest = (MCCommand) constructor.newInstance(objects);
+                } catch (Exception e) {
+                    // If unsuccessful, try the next constructor...
+                    continue;
+                }
+            }
+
+            // Inform the user if the command couldn't be parsed
+            if (commandRequest == null) {
+                server.getLog().log(LogLevel.DEBUG, "Couldn't parse command: " + input);
+                return;
+            }
+
+            sendCommandToAll(commandRequest);
+        } else { // Send chat message
+            sendMessageToAll(input);
+        }
+    }
+
+    private void sendCommandToAll(MCCommand command) {
         if (!isRunning || server == null) {
             return;
         }
 
-        ConsoleLogManager.logger.log(LogLevel.CHAT, "External: {0}",
+        Collection<MCClient> con = server.getClients();
+        synchronized (con) {
+            for (MCClient client : con) {
+                client.send(this, command);
+            }
+        }
+    }
+
+    private void sendMessageToAll(String message) {
+        if (!isRunning || server == null) {
+            return;
+        }
+
+        server.getLog().log(LogLevel.CHAT, "External: {0}",
                 inputTextField.getText()
         );
 
@@ -360,7 +429,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         Collection<MCClient> con = server.getClients();
         synchronized (con) {
             for (MCClient client : con) {
-                client.send(cm);
+                client.send(this, cm);
             }
         }
     }
@@ -426,7 +495,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         Collection<MCClient> con = server.getClients();
         synchronized (con) {
             for (MCClient client : con) {
-                client.send(cm);
+                client.send(this, cm);
                 client.close();
             }
         }
@@ -485,7 +554,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 ServerGUI gui = new ServerGUI();
-                
+
                 gui.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
                 gui.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
@@ -495,7 +564,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
                         System.exit(0);
                     }
                 });
-                
+
                 gui.setVisible(true);
             }
         });
@@ -531,6 +600,11 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
     @Override
     public void onResponse(MCClient client, MCMessage response, MCMessage request) {
+        String responseMessage = (response.getBody()).toString();
+        
+        if (responseMessage != null) {
+            server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
+        }
     }
 
     @Override
@@ -539,15 +613,17 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
     @Override
     public void onError(MCClient client, MCMessage response, MCMessage request) {
+        String responseMessage = (response.getBody()).toString();
+        
+        if (responseMessage != null) {
+            server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
+        }
     }
 
     @Override
     public void onConnected(MCClient client) {
-        MCCommand say = new SayCommand("\u00a7b\u00a7lPEWS\u00a7e Test Server v0.0.1");
-        client.send(say);
-
-        MCCommand list = new ListCommand();
-        client.send(list);
+        MCCommand say = new SayCommand("§b§lPEWS§e Test Server v0.0.1");
+        client.send(this, say);
 
         this.clientListModel.addElement(client.toString());
     }

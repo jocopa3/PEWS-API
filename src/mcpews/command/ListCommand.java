@@ -17,8 +17,7 @@ public class ListCommand extends MCCommand {
         super(new EmptyInput(),
                 new BasicOrigin("player"),
                 CommandType.LIST.getName(),
-                1,
-                "default"
+                1
         );
     }
 }

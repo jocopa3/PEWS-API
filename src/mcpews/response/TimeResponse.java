@@ -3,16 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mcpews.command;
+package mcpews.response;
+
+import mcpews.message.MCResponse;
 
 /**
  *
  * @author Jocopa3
  */
-public abstract class CommandInput {
-    transient String overloadName = "default";
+public class TimeResponse extends MCResponse {
+    private int time;
     
-    public String getOverload() {
-        return overloadName;
+    public int getTime() {
+        return time;
     }
 }

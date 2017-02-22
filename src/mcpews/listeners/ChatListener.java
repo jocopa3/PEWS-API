@@ -4,7 +4,6 @@ package mcpews.listeners;
  * This is a basic example of a global chatroom for Minecraft PE/Win10 made
  * using the Pocket Edition WebSocket API.
  */
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -18,9 +17,11 @@ import mcpews.MCListener;
 import mcpews.MCSocketServer;
 import mcpews.command.ListDetailCommand;
 import mcpews.command.SayCommand;
+import mcpews.command.SummonCommand;
 import mcpews.event.EventType;
 import mcpews.event.PlayerMessageEvent;
 import mcpews.logger.LogLevel;
+import mcpews.mcenum.EntityType;
 import mcpews.message.MCCommand;
 import mcpews.message.MCEvent;
 import mcpews.message.MCMessage;
@@ -49,7 +50,7 @@ public class ChatListener implements MCListener {
 
         // Create a new /say command and send it to the client
         MCCommand say = new SayCommand(message);
-        client.send(say);
+        client.send(this, say);
     }
 
     /*
@@ -69,7 +70,7 @@ public class ChatListener implements MCListener {
             for (MCClient client : clients) {
                 // Ignore if the client is the sender
                 if (!client.equals(sender)) {
-                    client.send(say);
+                    client.send(this, say);
                 }
             }
         }
@@ -83,7 +84,7 @@ public class ChatListener implements MCListener {
      */
     @Override
     public void onConnected(MCClient client) {
-        // Subscribe to player message events to recieve messages from the clien
+        // Subscribe to player message events to recieve messages from the client
         client.subscribeToEvent(EventType.PLAYER_MESSAGE);
 
         // Send a greeting to the newly connected client
@@ -91,14 +92,6 @@ public class ChatListener implements MCListener {
 
         // Inform other clients someone has connected
         sendMessageToOthers(client, "§eSomeone has joined the chat!");
-
-        MCCommand listdid = new ListDetailCommand(ListDetailCommand.Detail.ids);
-        MCCommand listdstat = new ListDetailCommand(ListDetailCommand.Detail.stats);
-        MCCommand listduuid = new ListDetailCommand(ListDetailCommand.Detail.uuids);
-        
-        client.send(listdid);
-        client.send(listdstat);
-        client.send(listduuid);
     }
 
     /*
@@ -142,15 +135,16 @@ public class ChatListener implements MCListener {
     @Override
     public void onResponse(MCClient client, MCMessage responseMessage, MCMessage requestMessage) {
         MCResponse response = (MCResponse) responseMessage.getBody();
-        switch(response.getResponseType()) {
+
+        switch (response.getResponseType()) {
             case SAY:
-                server.getLog().log(LogLevel.DEBUG, ((SayResponse)response).toString());
+                server.getLog().log(LogLevel.DEBUG, ((SayResponse) response).toString());
                 break;
             case LIST:
-                server.getLog().log(LogLevel.DEBUG, ((ListResponse)response).toString());
+                server.getLog().log(LogLevel.DEBUG, ((ListResponse) response).toString());
                 break;
             case LISTD:
-                server.getLog().log(LogLevel.DEBUG, ((ListDetailResponse)response).toString());
+                server.getLog().log(LogLevel.DEBUG, ((ListDetailResponse) response).toString());
                 break;
         }
     }
@@ -166,10 +160,11 @@ public class ChatListener implements MCListener {
     public void onError(MCClient client, MCMessage errorMessage, MCMessage requestMessage) {
     }
 
-    /*************************************************************************\
-    |* Everything after this point is just to test the listener.             *|
-    \*************************************************************************/
-    
+    /**
+     * ***********************************************************************\
+     * |* Everything after this point is just to test the listener. *|
+     * \************************************************************************
+     */
     // Proper way to stop a server
     public static void stopServer(MCSocketServer server) {
         server.getLog().log(Level.INFO, "Stopping server: {0}:" + server.getAddress().getPort(), server.getAddress().getHostString());

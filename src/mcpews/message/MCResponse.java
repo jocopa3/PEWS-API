@@ -13,8 +13,9 @@ import mcpews.command.*;
  */
 public class MCResponse extends MCBody {
     
-    int statusCode;
-    transient CommandType type;
+    protected int statusCode;
+    protected String statusMessage; // This may be null
+    protected transient CommandType type;
     
     protected MCResponse() {
         super(MessagePurposeType.COMMAND_RESPONSE);
@@ -30,5 +31,9 @@ public class MCResponse extends MCBody {
     
     public int getStatusCode() {
         return statusCode;
+    }
+    
+    public String getStatusMessage() {
+        return statusMessage;
     }
 }

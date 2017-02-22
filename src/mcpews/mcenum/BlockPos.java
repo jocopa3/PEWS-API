@@ -3,16 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mcpews.command;
+package mcpews.mcenum;
 
 /**
  *
  * @author Jocopa3
  */
-public abstract class CommandInput {
-    transient String overloadName = "default";
+public class BlockPos {
+    int x;
+    int y;
+    int z;
     
-    public String getOverload() {
-        return overloadName;
+    public BlockPos(String params) {
+        String[] input = params.split(" ");
+        
     }
 }

@@ -25,14 +25,17 @@ public class ListDetailCommand extends MCCommand {
         private ListDetailsInput(Detail detail) {
             details = detail.name();
         }
+        
+        private ListDetailsInput(String detail) {
+            details = detail;
+        }
     }
     
     public ListDetailCommand() {
         super(new EmptyInput(),
                 new BasicOrigin("player"),
                 CommandType.LISTD.getName(),
-                1,
-                "default"
+                1
         );
     }
     
@@ -43,6 +46,14 @@ public class ListDetailCommand extends MCCommand {
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.LISTD.getName());
         setVersion(1);
-        setOverload("default");
+    }
+    
+    public ListDetailCommand(String detail) {
+        super();
+        
+        setInput(new ListDetailsInput(detail));
+        setOrigin(new BasicOrigin("player"));
+        setName(CommandType.LISTD.getName());
+        setVersion(1);
     }
 }

@@ -28,10 +28,10 @@ public class MCClient {
 
     private ArrayList<EventType> subscribedEvents;
 
-    private HashMap<UUID, MCMessage> requestQuery;
+    private HashMap<UUID, ListenerRequest> requestQuery;
 
     private Timer requestTimer;
-    private int requestTimeout = 10000; // Wait 10 seconds before kicking out requests
+    private int requestTimeout = 30000; // Wait 30 seconds before kicking out requests
 
     public MCClient(WebSocket socket) {
         subscribedEvents = new ArrayList<>();
@@ -87,17 +87,26 @@ public class MCClient {
     }
 
     public void send(MCBody body) {
-        send(body.getAsMessage());
+        send(null, body);
+    }
+    
+    public void send(MCMessage message) {
+        send(null, message);
+    }
+    
+    public void send(MCListener listener, MCBody body) {
+        send(listener, body.getAsMessage());
     }
 
-    public void send(MCMessage message) {
+    public void send(MCListener listener, MCMessage message) {
         String messageJson = message.getMessageText();
-
+        
         // Add Command messages to the request map
         if (message.getPurpose() == MessagePurposeType.COMMAND_REQUEST) {
-            requestQuery.put(message.getHeader().getRequestId(), message);
+            ListenerRequest request = new ListenerRequest(listener, message);
+            requestQuery.put(message.getHeader().getRequestId(), request);
 
-            /*
+            
             // Removes the request if it doesn't recieve a timely response
             requestTimer.schedule(new TimerTask() {
                 @Override
@@ -105,13 +114,13 @@ public class MCClient {
                     requestQuery.remove(message.getHeader().getRequestId());
                 }
             }, requestTimeout);
-                    */
+            
         }
 
         socket.send(messageJson);
     }
 
-    protected MCMessage getCorrespondingRequest(MCMessage response) {
+    protected ListenerRequest getCorrespondingRequest(MCMessage response) {
         switch (response.getPurpose()) {
             case COMMAND_RESPONSE:
             case ERROR:
@@ -121,7 +130,7 @@ public class MCClient {
         }
     }
 
-    protected MCMessage getRequestByUUID(UUID requestId) {
+    protected ListenerRequest getRequestByUUID(UUID requestId) {
         return requestQuery.remove(requestId);
     }
 

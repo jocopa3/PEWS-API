@@ -19,14 +19,14 @@ public class MCCommand extends MCBody {
     int version;
     String overload;
     
-    public MCCommand(CommandInput input, CommandOrigin origin, String name, int version, String overload) {
+    public MCCommand(CommandInput input, CommandOrigin origin, String name, int version) {
         super(MessagePurposeType.COMMAND_REQUEST);
         
         this.input = input;
         this.origin = origin;
         this.name = name;
         this.version = version;
-        this.overload = overload;
+        this.overload = input.getOverload();
     }
     
     protected MCCommand() {
@@ -35,6 +35,7 @@ public class MCCommand extends MCBody {
     
     protected void setInput(CommandInput input) {
         this.input = input;
+        this.overload = input.getOverload();
     }
     
     protected void setOrigin(CommandOrigin origin) {
@@ -51,10 +52,6 @@ public class MCCommand extends MCBody {
     
     protected void setVersion(int version) {
         this.version = version;
-    }
-    
-    protected void setOverload(String overload) {
-        this.overload = overload;
     }
     
     public String getOverload() {

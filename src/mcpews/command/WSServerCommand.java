@@ -11,20 +11,20 @@ import mcpews.message.MCCommand;
  *
  * @author Jocopa3
  */
-public class SayCommand extends MCCommand {
+public class WSServerCommand extends MCCommand {
     
-    public class SayCommandInput extends CommandInput {
-        String message;
+    public class WSServerCommandInput extends CommandInput {
+        String serverUri;
         
-        public SayCommandInput(String message) {
-            this.message = message;
+        public WSServerCommandInput(String uri) {
+            serverUri = uri;
         }
     }
     
-    public SayCommand(String message) {
-        setInput(new SayCommandInput(message));
+    public WSServerCommand(String uri) {
+        setInput(new WSServerCommandInput(uri));
         setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SAY.getName());
+        setName(CommandType.WSSERVER.getName());
         setVersion(1);  
     }
 }

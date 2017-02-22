@@ -17,7 +17,7 @@ import mcpews.event.*;
  */
 public class MCMessage {
 
-    protected transient static final Gson gson;
+    protected static final Gson gson;
 
     static {
         GsonBuilder gb = new GsonBuilder()

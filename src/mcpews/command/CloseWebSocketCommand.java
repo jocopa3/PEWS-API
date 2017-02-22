@@ -17,8 +17,7 @@ public class CloseWebSocketCommand extends MCCommand {
         super(new EmptyInput(),
                 new BasicOrigin("player"),
                 CommandType.CLOSE_WEBSOCKET.getName(),
-                1,
-                "default"
+                1
         );
     }
 }

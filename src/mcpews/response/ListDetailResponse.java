@@ -18,7 +18,6 @@ public class ListDetailResponse extends MCResponse {
     private int currentPlayerCount;
     private int maxPlayerCount;
     private String players;
-    private String statusMessage;
     
     public String details() {
         return details;
@@ -34,10 +33,6 @@ public class ListDetailResponse extends MCResponse {
     
     public String players() {
         return players;
-    }
-    
-    public String statusMessage() {
-        return statusMessage;
     }
     
     @Override
