@@ -32,8 +32,8 @@ public class SummonResponse extends MCResponse {
     
     @Override
     public String toString() {
-        if(statusMessage == null) {
-            return null;
+        if(statusCode != 0) {
+            return statusMessage;
         }
         
         return statusMessage.toLowerCase().replace("object", entityType);

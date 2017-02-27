@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mcpews.listeners;
 
 import mcpews.*;
@@ -13,11 +8,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -30,18 +23,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import mcpews.command.CommandType;
-import mcpews.command.ListCommand;
 import mcpews.command.SayCommand;
 import mcpews.event.*;
 import mcpews.logger.*;
 import mcpews.message.*;
 import mcpews.util.ChatFormatCode;
-import org.java_websocket.WebSocket;
-import org.java_websocket.framing.CloseFrame;
 
 /**
  *
- * @author Matt
+ * @author Jocopa3
  */
 public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
@@ -349,6 +339,57 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         textLogger.filter(filter);
     }//GEN-LAST:event_logWarningsCheckBoxActionPerformed
 
+    /* 
+     * Splits a string by spaces, but ignores spaces when inside brackets or quotes
+     * This is meant to be faster and less error-prone than using regex.
+     * 
+     * For example, a string of: @a[name=Monkey Wrench, m = -1 ] "Super User" one two
+     * evaluates to:
+     * @a[name=Monkey Wrench, m = -1 ]
+     * "Super User"
+     * one
+     * two
+     */
+    private String[] splitCommandText(String commandText) {
+        int length = commandText.length();
+        ArrayList<String> parameters = new ArrayList<>();
+
+        StringBuilder currentString = new StringBuilder();
+        int inBrackets = 0;
+        boolean inQuotes = false;
+
+        for (int i = 0; i < length; i++) {
+            char c = commandText.charAt(i);
+
+            switch (c) {
+                case '"':
+                    inQuotes = !inQuotes;
+                    break;
+                case '[':
+                    inBrackets++;
+                    break;
+                case ']':
+                    inBrackets--;
+                    break;
+            }
+
+            if (inBrackets == 0 && !inQuotes && c == ' ') {
+                parameters.add(currentString.toString());
+                currentString.delete(0, currentString.length());
+            } else {
+                currentString.append(c);
+
+                if (i == length - 1) {
+                    parameters.add(currentString.toString());
+                    currentString.delete(0, currentString.length());
+                }
+            }
+        }
+
+        return parameters.toArray(new String[0]);
+    }
+
+    // Ugliest, function, ever.
     private void parseChatInput(String input) {
         if (input.startsWith("/")) { // Send command message
             CommandType command = CommandType.fromChatString(input);
@@ -361,8 +402,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
             // Parameters should store all string parameters following the /command input
             // Possible bug when typing a space between '/' and the command name like: / summon tnt
-            String[] parameters = input.replaceFirst("/" + command.getName(), "").split(" ");
-
+            String[] parameters = splitCommandText(input.replaceFirst("/" + command.getName() + " ", ""));
             MCCommand commandRequest = null;
 
             // Get all constructors and loop through them
@@ -372,27 +412,64 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
             for (Constructor constructor : constructors) {
                 Class[] params = constructor.getParameterTypes();
-                int paramIndx = 0;
+
+                int paramIndx = 0, objIndx = 0;
 
                 Object[] objects = new Object[params.length];
 
                 // Try to create each object in the constructor by passing the parameter strings
                 try {
                     for (Class paramType : params) {
-                        objects[paramIndx] = paramType.getConstructor(String.class).newInstance(parameters[paramIndx + 1]);
-                        paramIndx++;
+                        Constructor paramCtor;
+                        try {
+                            paramCtor = paramType.getConstructor(String.class);
+                            if (paramCtor != null) {
+                                objects[objIndx] = paramCtor.newInstance(parameters[paramIndx]);
+                                objIndx++;
+                                paramIndx++;
+                                continue;
+                            }
+                        } catch (Exception e) {
+                        }
+                        
+                        try {
+                            paramCtor = paramType.getConstructor(String.class, String.class);
+                            if (paramCtor != null) {
+                                objects[objIndx] = paramCtor.newInstance(parameters[paramIndx], parameters[paramIndx + 1]);
+                                objIndx++;
+                                paramIndx += 2;
+                                continue;
+                            }
+                        } catch (Exception e) {
+                        }
+                        
+                        try {
+                            paramCtor = paramType.getConstructor(String.class, String.class, String.class);
+                            if (paramCtor != null) {
+                                objects[objIndx] = paramCtor.newInstance(parameters[paramIndx], parameters[paramIndx + 1], parameters[paramIndx + 2]);
+                                objIndx++;
+                                paramIndx += 3;
+                                continue;
+                            }
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
+                    
+                    if (paramIndx != parameters.length) {
+                        continue;
                     }
 
                     commandRequest = (MCCommand) constructor.newInstance(objects);
+                    break;
                 } catch (Exception e) {
-                    // If unsuccessful, try the next constructor...
                     continue;
                 }
             }
 
             // Inform the user if the command couldn't be parsed
             if (commandRequest == null) {
-                server.getLog().log(LogLevel.DEBUG, "Couldn't parse command: " + input);
+                server.getLog().log(LogLevel.INFO, "Couldn't parse command: " + input);
                 return;
             }
 
@@ -437,11 +514,20 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
     private void initializeListeners(MCSocketServer server) {
         server.addListener(this);
 
-        ChatListener chat = new ChatListener(server);
-        server.addListener(chat);
+        HideAndSeekListener hide = new HideAndSeekListener(server);
+        server.addListener(hide);
+        
+        //ChatListener chat = new ChatListener(server);
+        //server.addListener(chat);
 
         DebugListener debug = new DebugListener();
-        server.addListener(debug);
+        for (EventType event : EventType.values()) {
+            // debug.addEvent(event);
+        }
+        //server.addListener(debug);
+
+        //NukemListener nuke = new NukemListener();
+        //server.addListener(nuke);
     }
 
     private void createServer() {
@@ -490,7 +576,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         }
 
         messageLogger.log(Level.INFO, "Stopping server: {0}:" + server.getAddress().getPort(), new Object[]{server.getAddress().getHostString()});
-        MCCommand cm = new SayCommand("\u00a7c\u00a7lPEWS server is shutting down...");
+        MCCommand cm = new SayCommand("\u00a7cPEWS server is shutting down...");
 
         Collection<MCClient> con = server.getClients();
         synchronized (con) {
@@ -530,7 +616,7 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        /*
+ /*
          try {
          for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
          if ("Nimbus".equals(info.getName())) {
@@ -600,11 +686,11 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
     @Override
     public void onResponse(MCClient client, MCMessage response, MCMessage request) {
-        String responseMessage = (response.getBody()).toString();
-        
-        if (responseMessage != null) {
-            server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
-        }
+        //String responseMessage = (response.getBody()).toString();
+
+        //if (responseMessage != null) {
+            //server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
+        //}
     }
 
     @Override
@@ -613,16 +699,16 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
     @Override
     public void onError(MCClient client, MCMessage response, MCMessage request) {
-        String responseMessage = (response.getBody()).toString();
-        
-        if (responseMessage != null) {
-            server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
-        }
+        //String responseMessage = (response.getBody()).toString();
+
+        //if (responseMessage != null) {
+            //server.getLog().log(LogLevel.INFO, "{0}", responseMessage);
+        //}
     }
 
     @Override
     public void onConnected(MCClient client) {
-        MCCommand say = new SayCommand("§b§lPEWS§e Test Server v0.0.1");
+        MCCommand say = new SayCommand("§bPEWS§e Test Server v0.0.1");
         client.send(this, say);
 
         this.clientListModel.addElement(client.toString());

@@ -85,4 +85,9 @@ public class MCMessage {
     public MCHeader getHeader() {
         return header;
     }
+    
+    @Override
+    public String toString() {
+        return body.toString();
+    }
 }

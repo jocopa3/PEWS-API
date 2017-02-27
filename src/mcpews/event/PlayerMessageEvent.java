@@ -17,17 +17,17 @@ public class PlayerMessageEvent extends MCEvent {
         super(type, properties, measurements);
     }
 
-    protected class PlayerMessageEventProperties extends EventProperties {
+    protected class PlayerMessageProperties extends EventProperties {
         protected String Message;
         protected String Sender;
     }
     
     public String getSender() {
-        return ((PlayerMessageEventProperties) properties).Sender;
+        return ((PlayerMessageProperties) properties).Sender;
     }
 
     public String getMessage() {
-        return ((PlayerMessageEventProperties) properties).Message;
+        return ((PlayerMessageProperties) properties).Message;
     }
 
     @Override

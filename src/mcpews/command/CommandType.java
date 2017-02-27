@@ -16,17 +16,18 @@ import mcpews.response.*;
 public enum CommandType {
     // Command classes must not be null!
 
-    // closewebsocket is a generic command with no input or output
-    CLOSE_WEBSOCKET("closewebsocket", CloseWebSocketCommand.class, MCResponse.class),
-    CONNECT("connect", WSServerCommand.class, null),
+    CLOSE_WEBSOCKET("closewebsocket", CloseWebSocketCommand.class, CloseWebSocketResponse.class),
+    CONNECT("connect", WSServerCommand.class, WSServerResponse.class),
     LIST("list", ListCommand.class, ListResponse.class),
     LISTD("listd", ListDetailCommand.class, ListDetailResponse.class),
     SAY("say", SayCommand.class, SayResponse.class),
+    SETBLOCK("setblock", SetBlockCommand.class, SetBlockResponse.class),
     SUMMON("summon", SummonCommand.class, SummonResponse.class),
+    TESTFORBLOCK("testforblock", TestForBlockCommand.class, TestForBlockResponse.class),
     TIME_ADD("time add", TimeAddCommand.class, TimeResponse.class),
     TIME_QUERY("time query", TimeQueryCommand.class, TimeResponse.class),
     TIME_SET("time set", TimeSetCommand.class, TimeResponse.class),
-    WSSERVER("wsserver", WSServerCommand.class, MCResponse.class);
+    WSSERVER("wsserver", WSServerCommand.class, WSServerResponse.class);
 
     private String name;
     private Class requestBodyClass;

@@ -15,7 +15,7 @@ import mcpews.message.*;
 
 /**
  *
- * @author Matt S.
+ * @author Jocopa3 S.
  */
 public class DebugListener implements MCListener {
 
@@ -29,9 +29,10 @@ public class DebugListener implements MCListener {
 
     @Override
     public void onEvent(MCClient client, MCMessage message) {
-        MCSocketServer.messageLogger.log(LogLevel.DEBUG, "Received event from {0}; Message Text: {1}",
+        MCSocketServer.messageLogger.log(LogLevel.DEBUG, "Received event from {0}; ToString: {1}; Message Text: {2}",
                 new Object[]{
                     client.toString(),
+                    message.toString(),
                     message.getMessageText()
                 });
     }

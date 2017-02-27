@@ -52,14 +52,13 @@ public class EventSerializer implements JsonSerializer<MCEvent>, JsonDeserialize
         EventProperties properties = jdc.deserialize(je.getAsJsonObject().get("properties"), eventType.getPropertiesClassType());
         EventMeasurements measurements = jdc.deserialize(je.getAsJsonObject().get("measurements"), eventType.getMeasurementsClassType());
         
-        
-        Constructor<?> ctor = null;
+        Constructor<?> ctor;
         MCEvent event;
         try {
             ctor = eventType.getEventClassType().getConstructor(EventType.class, EventProperties.class, EventMeasurements.class);
             event = (MCEvent)eventType.getEventClassType().cast(ctor.newInstance(new Object[] { eventType, properties, measurements }));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             event = new MCEvent(eventType, properties, measurements);
         }
         

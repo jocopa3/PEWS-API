@@ -104,18 +104,14 @@ public class MCSocketServer extends WebSocketServer {
                     // Add a tip to the deserializer about what command triggered the response
                     JsonObject body = messageJson.get("body").getAsJsonObject();
                     JsonElement statusCodeJson = body.get("statusCode");
-                    
+
                     if (statusCodeJson != null) {
                         int statusCode = statusCodeJson.getAsInt();
 
-                        if (statusCode == 0) {
-                            body.addProperty(ResponseSerializer.PROPERTY_HINT_COMMAND,
-                                    ((MCCommand) requestMessage.getBody()).getName());
-                            body.addProperty(ResponseSerializer.PROPERTY_HINT_OVERLOAD,
-                                    ((MCCommand) requestMessage.getBody()).getOverload());
-                        } else {
-                            headerJson.addProperty("messagePurpose", "error");
-                        }
+                        body.addProperty(ResponseSerializer.PROPERTY_HINT_COMMAND,
+                                ((MCCommand) requestMessage.getBody()).getName());
+                        body.addProperty(ResponseSerializer.PROPERTY_HINT_OVERLOAD,
+                                ((MCCommand) requestMessage.getBody()).getOverload());
                     }
                 } else {
                     throw new Exception("Response with no corresponding request");
@@ -140,7 +136,7 @@ public class MCSocketServer extends WebSocketServer {
             return;
         }
 
-        System.out.println(message);
+        //System.out.println(message);
 
         // If the request was made by a specific listener, send the response directly to it
         if (request != null && request.getRequestor() != null) {

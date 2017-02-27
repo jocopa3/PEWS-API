@@ -100,7 +100,7 @@ public class MCClient {
 
     public void send(MCListener listener, MCMessage message) {
         String messageJson = message.getMessageText();
-        
+        //System.out.println(messageJson);
         // Add Command messages to the request map
         if (message.getPurpose() == MessagePurposeType.COMMAND_REQUEST) {
             ListenerRequest request = new ListenerRequest(listener, message);

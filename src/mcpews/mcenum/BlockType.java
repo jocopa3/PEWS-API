@@ -6,9 +6,7 @@ import java.util.HashMap;
  *
  * @author Jocopa3
  */
-public enum ItemType {
-    // NOTE: This doesn't contain all blocks! Use BlockType for specific blocks
-    // In this enum, if a block has an item form, only the item form is listed
+public enum BlockType {
 
     AIR("air", 0),
     STONE("stone", 1),
@@ -62,6 +60,7 @@ public enum ItemType {
     SANDSTONE_CHISELED("sandstone", "chiseled", 24, 1),
     SANDSTONE_SMOOTH("sandstone", "smooth", 24, 2),
     NOTEBLOCK("noteblock", 25),
+    BED("bed", 26),
     GOLDEN_RAIL("golden_rail", 27),
     DETECTOR_RAIL("detector_rail", 28),
     STICKY_PISTON("sticky_piston", 29),
@@ -75,7 +74,7 @@ public enum ItemType {
     WOOL_WHITE("wool", "white", 35, 0),
     WOOL_ORANGE("wool", "orange", 35, 1),
     WOOL_MAGENTA("wool", "magenta", 35, 2),
-    WOOL_LIGHTBLUE("wool", "lightBlue", 35, 3),
+    WOOL_LIGHTBLUE("wool", "lightBlue", 35,  3),
     WOOL_YELLOW("wool", "yellow", 35, 4),
     WOOL_LIME("wool", "lime", 35, 5),
     WOOL_PINK("wool", "pink", 35, 6),
@@ -132,16 +131,19 @@ public enum ItemType {
     DIAMOND_ORE("diamond_ore", 56),
     DIAMOND_BLOCK("diamond_block", 57),
     CRAFTING_TABLE("crafting_table", 58),
+    WHEAT("wheat", 59),
     FARMLAND("farmland", 60),
     FURNACE("furnace", 61),
     LIT_FURNACE("lit_furnace", 62),
     STANDING_SIGN("standing_sign", 63),
+    WOODEN_DOOR("wooden_door", 64),
     LADDER("ladder", 65),
     RAIL("rail", 66),
     STONE_STAIRS("stone_stairs", 67),
     WALL_SIGN("wall_sign", 68),
     LEVER("lever", 69),
     STONE_PRESSURE_PLATE("stone_pressure_plate", 70),
+    IRON_DOOR("iron_door", 71),
     WOODEN_PRESSURE_PLATE("wooden_pressure_plate", 72),
     REDSTONE_ORE("redstone_ore", 73),
     LIT_REDSTONE_ORE("lit_redstone_ore", 74),
@@ -153,6 +155,7 @@ public enum ItemType {
     SNOW("snow", 80),
     CACTUS("cactus", 81),
     CLAY("clay", 82),
+    REEDS("reeds", 83),
     FENCE("fence", 85),
     FENCE_SPRUCEFENCE("fence", "spruceFence", 85, 1),
     FENCE_BIRCHFENCE("fence", "birchFence", 85, 2),
@@ -165,6 +168,7 @@ public enum ItemType {
     GLOWSTONE("glowstone", 89),
     PORTAL("portal", 90),
     LIT_PUMPKIN("lit_pumpkin", 91),
+    CAKE("cake", 92),
     UNPOWERED_REPEATER("unpowered_repeater", 93),
     POWERED_REPEATER("powered_repeater", 94),
     INVISIBLEBEDROCK("invisibleBedrock", 95),
@@ -197,7 +201,10 @@ public enum ItemType {
     NETHER_BRICK("nether_brick", 112),
     NETHER_BRICK_FENCE("nether_brick_fence", 113),
     NETHER_BRICK_STAIRS("nether_brick_stairs", 114),
+    NETHER_WART("nether_wart", 115),
     ENCHANTING_TABLE("enchanting_table", 116),
+    BREWING_STAND("brewing_stand", 117),
+    CAULDRON("cauldron", 118),
     END_PORTAL("end_portal", 119),
     END_PORTAL_FRAME("end_portal_frame", 120),
     END_STONE("end_stone", 121),
@@ -219,6 +226,7 @@ public enum ItemType {
     BEACON("beacon", 138),
     COBBLESTONE_WALL("cobblestone_wall", 139),
     COBBLESTONE_WALL_MOSSY("cobblestone_wall", "mossy", 139, 1),
+    FLOWER_POT("flower_pot", 140),
     CARROTS("carrots", 141),
     POTATOES("potatoes", 142),
     WOODEN_BUTTON("wooden_button", 143),
@@ -234,6 +242,7 @@ public enum ItemType {
     DAYLIGHT_DETECTOR("daylight_detector", 151),
     REDSTONE_BLOCK("redstone_block", 152),
     QUARTZ_ORE("quartz_ore", 153),
+    HOPPER("hopper", 154),
     QUARTZ_BLOCK("quartz_block", 155),
     QUARTZ_BLOCK_CHISELED("quartz_block", "chiseled", 155, 1),
     QUARTZ_BLOCK_LINES("quartz_block", "lines", 155, 2),
@@ -335,7 +344,13 @@ public enum ItemType {
     JUNGLE_FENCE_GATE("jungle_fence_gate", 185),
     DARK_OAK_FENCE_GATE("dark_oak_fence_gate", 186),
     ACACIA_FENCE_GATE("acacia_fence_gate", 187),
+    SPRUCE_DOOR("spruce_door", 193),
+    BIRCH_DOOR("birch_door", 194),
+    JUNGLE_DOOR("jungle_door", 195),
+    ACACIA_DOOR("acacia_door", 196),
+    DARK_OAK_DOOR("dark_oak_door", 197),
     GRASS_PATH("grass_path", 198),
+    FRAME("frame", 199),
     CHORUS_FLOWER("chorus_flower", 200),
     PURPUR_BLOCK("purpur_block", 201),
     PURPUR_BLOCK_CHISELED("purpur_block", "chiseled", 201, 1),
@@ -365,7 +380,9 @@ public enum ItemType {
     STAINED_GLASS_GREEN("stained_glass", "green", 241, 13),
     STAINED_GLASS_RED("stained_glass", "red", 241, 14),
     STAINED_GLASS_BLACK("stained_glass", "black", 241, 15),
+    CAMERA("camera", 242),
     PODZOL("podzol", 243),
+    BEETROOT("beetroot", 244),
     STONECUTTER("stonecutter", 245),
     GLOWINGOBSIDIAN("glowingobsidian", 246),
     NETHERREACTOR("netherreactor", 247),
@@ -375,260 +392,41 @@ public enum ItemType {
     INFO_UPDATE2("info_update2", 249),
     MOVINGBLOCK("movingBlock", 250),
     OBSERVER("observer", 251),
-    RESERVED6("reserved6", 255),
-    
-    // Items
-
-    IRON_SHOVEL("iron_shovel", 256),
-    IRON_PICKAXE("iron_pickaxe", 257),
-    IRON_AXE("iron_axe", 258),
-    FLINT_AND_STEEL("flint_and_steel", 259),
-    APPLE("apple", 260),
-    BOW("bow", 261),
-    ARROW("arrow", 262),
-    COAL("coal", 263),
-    COAL_CHARCOAL("coal", "charcoal", 263, 1),
-    DIAMOND("diamond", 264),
-    IRON_INGOT("iron_ingot", 265),
-    GOLD_INGOT("gold_ingot", 266),
-    IRON_SWORD("iron_sword", 267),
-    WOODEN_SWORD("wooden_sword", 268),
-    WOODEN_SHOVEL("wooden_shovel", 269),
-    WOODEN_PICKAXE("wooden_pickaxe", 270),
-    WOODEN_AXE("wooden_axe", 271),
-    STONE_SWORD("stone_sword", 272),
-    STONE_SHOVEL("stone_shovel", 273),
-    STONE_PICKAXE("stone_pickaxe", 274),
-    STONE_AXE("stone_axe", 275),
-    DIAMOND_SWORD("diamond_sword", 276),
-    DIAMOND_SHOVEL("diamond_shovel", 277),
-    DIAMOND_PICKAXE("diamond_pickaxe", 278),
-    DIAMOND_AXE("diamond_axe", 279),
-    STICK("stick", 280),
-    BOWL("bowl", 281),
-    MUSHROOM_STEW("mushroom_stew", 282),
-    GOLDEN_SWORD("golden_sword", 283),
-    GOLDEN_SHOVEL("golden_shovel", 284),
-    GOLDEN_PICKAXE("golden_pickaxe", 285),
-    GOLDEN_AXE("golden_axe", 286),
-    STRING("string", 287),
-    FEATHER("feather", 288),
-    GUNPOWDER("gunpowder", 289),
-    WOODEN_HOE("wooden_hoe", 290),
-    STONE_HOE("stone_hoe", 291),
-    IRON_HOE("iron_hoe", 292),
-    DIAMOND_HOE("diamond_hoe", 293),
-    GOLDEN_HOE("golden_hoe", 294),
-    WHEAT_SEEDS("wheat_seeds", 295),
-    WHEAT("wheat", 296),
-    BREAD("bread", 297),
-    LEATHER_HELMET("leather_helmet", 298),
-    LEATHER_CHESTPLATE("leather_chestplate", 299),
-    LEATHER_LEGGINGS("leather_leggings", 300),
-    LEATHER_BOOTS("leather_boots", 301),
-    CHAINMAIL_HELMET("chainmail_helmet", 302),
-    CHAINMAIL_CHESTPLATE("chainmail_chestplate", 303),
-    CHAINMAIL_LEGGINGS("chainmail_leggings", 304),
-    CHAINMAIL_BOOTS("chainmail_boots", 305),
-    IRON_HELMET("iron_helmet", 306),
-    IRON_CHESTPLATE("iron_chestplate", 307),
-    IRON_LEGGINGS("iron_leggings", 308),
-    IRON_BOOTS("iron_boots", 309),
-    DIAMOND_HELMET("diamond_helmet", 310),
-    DIAMOND_CHESTPLATE("diamond_chestplate", 311),
-    DIAMOND_LEGGINGS("diamond_leggings", 312),
-    DIAMOND_BOOTS("diamond_boots", 313),
-    GOLDEN_HELMET("golden_helmet", 314),
-    GOLDEN_CHESTPLATE("golden_chestplate", 315),
-    GOLDEN_LEGGINGS("golden_leggings", 316),
-    GOLDEN_BOOTS("golden_boots", 317),
-    FLINT("flint", 318),
-    PORKCHOP("porkchop", 319),
-    COOKED_PORKCHOP("cooked_porkchop", 320),
-    PAINTING("painting", 321),
-    GOLDEN_APPLE("golden_apple", 322),
-    SIGN("sign", 323),
-    WOODEN_DOOR("wooden_door", 324),
-    BUCKET_EMPTY("bucket", "empty", 325, 0),
-    BUCKET_MILK("bucket", "milk", 325, 1),
-    BUCKET_BUCKET_WATER("bucket", "bucketWater", 325, 8),
-    BUCKET_BUCKET_LAVA("bucket", "bucketLava", 325, 10),
-    MINECART("minecart", 328),
-    SADDLE("saddle", 329),
-    IRON_DOOR("iron_door", 330),
-    REDSTONE("redstone", 331),
-    SNOWBALL("snowball", 332),
-    BOAT_OAK("boat", "oak", 333, 0),
-    BOAT_SPRUCE("boat", "spruce", 333, 1),
-    BOAT_BIRCH("boat", "birch", 333, 2),
-    BOAT_JUNGLE("boat", "jungle", 333, 3),
-    BOAT_ACACIA("boat", "acacia", 333, 4),
-    BOAT_BIG_OAK("boat", "big_oak", 333, 5),
-    LEATHER("leather", 334),
-    BRICK("brick", 336),
-    CLAY_BALL("clay_ball", 337),
-    REEDS("reeds", 338),
-    PAPER("paper", 339),
-    BOOK("book", 340),
-    SLIME_BALL("slime_ball", 341),
-    CHEST_MINECART("chest_minecart", 342),
-    EGG("egg", 344),
-    COMPASS("compass", 345),
-    FISHING_ROD("fishing_rod", 346),
-    CLOCK("clock", 347),
-    GLOWSTONE_DUST("glowstone_dust", 348),
-    FISH("fish", 349),
-    COOKED_FISH("cooked_fish", 350),
-    DYE_BLACK("dye", "black", 351, 0),
-    DYE_RED("dye", "red", 351, 1),
-    DYE_GREEN("dye", "green", 351, 2),
-    DYE_BROWN("dye", "brown", 351, 3),
-    DYE_BLUE("dye", "blue", 351, 4),
-    DYE_PURPLE("dye", "purple", 351, 5),
-    DYE_CYAN("dye", "cyan", 351, 6),
-    DYE_SILVER("dye", "silver", 351, 7),
-    DYE_GRAY("dye", "gray", 351, 8),
-    DYE_PINK("dye", "pink", 351, 9),
-    DYE_LIME("dye", "lime", 351, 10),
-    DYE_YELLOW("dye", "yellow", 351, 11),
-    DYE_LIGHT_BLUE("dye", "lightBlue", 351, 12),
-    DYE_MAGENTA("dye", "magenta", 351, 13),
-    DYE_ORANGE("dye", "orange", 351, 14),
-    DYE_WHITE("dye", "white", 351, 15),
-    BONE("bone", 352),
-    SUGAR("sugar", 353),
-    CAKE("cake", 354),
-    BED("bed", 355),
-    REPEATER("repeater", 356),
-    COOKIE("cookie", 357),
-    MAP_FILLED("map_filled", 358),
-    SHEARS("shears", 359),
-    MELON("melon", 360),
-    PUMPKIN_SEEDS("pumpkin_seeds", 361),
-    MELON_SEEDS("melon_seeds", 362),
-    BEEF("beef", 363),
-    COOKED_BEEF("cooked_beef", 364),
-    CHICKEN("chicken", 365),
-    COOKED_CHICKEN("cooked_chicken", 366),
-    ROTTEN_FLESH("rotten_flesh", 367),
-    ENDER_PEARL("ender_pearl", 368),
-    BLAZE_ROD("blaze_rod", 369),
-    GHAST_TEAR("ghast_tear", 370),
-    GOLD_NUGGET("gold_nugget", 371),
-    NETHER_WART("nether_wart", 372),
-    POTION("potion", 373),
-    GLASS_BOTTLE("glass_bottle", 374),
-    SPIDER_EYE("spider_eye", 375),
-    FERMENTED_SPIDER_EYE("fermented_spider_eye", 376),
-    BLAZE_POWDER("blaze_powder", 377),
-    MAGMA_CREAM("magma_cream", 378),
-    BREWING_STAND("brewing_stand", 379),
-    CAULDRON("cauldron", 380),
-    ENDER_EYE("ender_eye", 381),
-    SPECKLED_MELON("speckled_melon", 382),
-    SPAWN_EGG("spawn_egg", 383),
-    EXPERIENCE_BOTTLE("experience_bottle", 384),
-    FIREBALL("fireball", 385),
-    EMERALD("emerald", 388),
-    FRAME("frame", 389),
-    FLOWER_POT("flower_pot", 390),
-    CARROT("carrot", 391),
-    POTATO("potato", 392),
-    BAKED_POTATO("baked_potato", 393),
-    POISONOUS_POTATO("poisonous_potato", 394),
-    EMPTY_MAP("emptyMap", 395),
-    GOLDEN_CARROT("golden_carrot", 396),
-    SKULL_SKELETON("skull", "skeleton", 397, 0),
-    SKULL_WITHER("skull", "wither", 397, 1),
-    SKULL_ZOMBIE("skull", "zombie", 397, 2),
-    SKULL_PLAYER("skull", "player", 397, 3),
-    SKULL_CREEPER("skull", "creeper", 397, 4),
-    SKULL_DRAGON("skull", "dragon", 397, 5),
-    CARROT_ON_A_STICK("carrotOnAStick", 398),
-    NETHER_STAR("netherStar", 399),
-    PUMPKIN_PIE("pumpkin_pie", 400),
-    ENCHANTED_BOOK("enchanted_book", 403),
-    COMPARATOR("comparator", 404),
-    NETHERBRICK("netherbrick", 405),
-    QUARTZ("quartz", 406),
-    TNT_MINECART("tnt_minecart", 407),
-    HOPPER_MINECART("hopper_minecart", 408),
-    PRISMARINE_SHARD("prismarine_shard", 409),
-    HOPPER("hopper", 410),
-    RABBIT("rabbit", 411),
-    COOKED_RABBIT("cooked_rabbit", 412),
-    RABBIT_STEW("rabbit_stew", 413),
-    RABBIT_FOOT("rabbit_foot", 414),
-    RABBIT_HIDE("rabbit_hide", 415),
-    HORSE_ARMOR_LEATHER("horsearmorleather", 416),
-    HORSE_ARMOR_IRON("horsearmoriron", 417),
-    HORSE_ARMOR_GOLD("horsearmorgold", 418),
-    HORSE_ARMOR_DIAMOND("horsearmordiamond", 419),
-    LEAD("lead", 420),
-    NAME_TAG("nameTag", 421),
-    PRISMARINE_CRYSTALS("prismarine_crystals", 422),
-    MUTTON_RAW("muttonRaw", 423),
-    MUTTON_COOKED("muttonCooked", 424),
-    END_CRYSTAL("end_crystal", 426),
-    SPRUCE_DOOR("spruce_door", 427),
-    BIRCH_DOOR("birch_door", 428),
-    JUNGLE_DOOR("jungle_door", 429),
-    ACACIA_DOOR("acacia_door", 430),
-    DARK_OAK_DOOR("dark_oak_door", 431),
-    CHORUS_FRUIT("chorus_fruit", 432),
-    CHORUS_FRUIT_POPPED("chorus_fruit_popped", 433),
-    DRAGON_BREATH("dragon_breath", 437),
-    SPLASH_POTION("splash_potion", 438),
-    LINGERING_POTION("lingering_potion", 441),
-    ELYTRA("elytra", 444),
-    SHULKER_SHELL("shulker_shell", 445),
-    BOARD_ONE_BY_ONE("board", "oneByOne", 454, 0),
-    BOARD_TWO_BY_ONE("board", "twoByOne", 454, 1),
-    BOARD_THREE_BY_TWO("board", "threeByTwo", 454, 2),
-    PORTFOLIO("portfolio", 456),
-    BEETROOT("beetroot", 457),
-    BEETROOT_SEEDS("beetroot_seeds", 458),
-    BEETROOT_SOUP("beetroot_soup", 459),
-    SALMON("salmon", 460),
-    CLOWNFISH("clownfish", 461),
-    PUFFERFISH("pufferfish", 462),
-    COOKED_SALMON("cooked_salmon", 463),
-    APPLE_ENCHANTED("appleEnchanted", 466),
-    CAMERA("camera", 498);
+    RESERVED6("reserved6", 255);
 
     private String name;
     private String subName;
     private int id;
     private int data;
 
-    private static HashMap<String, HashMap<Integer, ItemType>> fromName;
-    private static HashMap<Integer, HashMap<Integer, ItemType>> fromId;
+    private static HashMap<String, HashMap<Integer, BlockType>> fromName;
+    private static HashMap<Integer, HashMap<Integer, BlockType>> fromId;
 
     static {
         fromName = new HashMap<>();
         fromId = new HashMap<>();
-
-        for (ItemType item : values()) {
-            HashMap<Integer, ItemType> itemMap = fromName.get(item.getName());
-
-            if (itemMap == null) {
-                itemMap = new HashMap<>();
-                fromName.put(item.getName(), itemMap);
-                fromId.put(item.getId(), itemMap);
+        
+        for (BlockType block : values()) {
+            HashMap<Integer, BlockType> blockMap = fromName.get(block.getName());
+            
+            if (blockMap == null) {
+                blockMap = new HashMap<>();
+                fromName.put(block.getName(), blockMap);
+                fromId.put(block.getId(), blockMap);                                
             }
-
-            itemMap.put(item.getData(), item);
+            
+            blockMap.put(block.getData(), block);
         }
     }
 
-    ItemType(String name, int id) {
+    BlockType(String name, int id) {
         this.name = name;
         this.id = id;
         subName = "default";
         data = 0;
     }
 
-    ItemType(String baseName, String subName, int id, int data) {
+    BlockType(String baseName, String subName, int id, int data) {
         name = baseName;
         this.subName = subName;
         this.id = id;
@@ -651,19 +449,19 @@ public enum ItemType {
         return data;
     }
 
-    public static ItemType fromString(String name) {
+    public static BlockType fromString(String name) {
         return fromName.get(name).get(0);
     }
-
-    public static ItemType fromString(String name, int data) {
+    
+    public static BlockType fromString(String name, int data) {
         return fromName.get(name).get(data);
     }
-
-    public static ItemType fromId(int id) {
+    
+    public static BlockType fromId(int id) {
         return fromId.get(id).get(0);
     }
-
-    public static ItemType fromId(int id, int data) {
+    
+    public static BlockType fromId(int id, int data) {
         return fromId.get(id).get(data);
     }
 }

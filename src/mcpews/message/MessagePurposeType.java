@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
- * @author Matt
+ * @author Jocopa3
  */
 public enum MessagePurposeType {
     COMMAND_RESPONSE("commandResponse", MCResponse.class),
