@@ -594,8 +594,6 @@ public class ServerGUI extends javax.swing.JFrame implements MCListener {
 
         try {
             server.stop(1000);
-        } catch (IOException ex) {
-            messageLogger.log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             messageLogger.log(Level.SEVERE, "Server was interrupted.", ex);
         }
