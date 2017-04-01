@@ -131,17 +131,17 @@ public class HideAndSeekListener implements MCListener {
 
                 String message;
 
-                if (distanceDelta < -1.0) {
+                if (distanceDelta < -1.1) {
                     message = ChatFormatCode.BLUE_STRING + ChatFormatCode.BOLD_STRING + "Getting Super Cold";
-                } else if (distanceDelta < -0.7) {
+                } else if (distanceDelta < -0.6) {
                     message = ChatFormatCode.BLUE_STRING + "Getting Colder";
-                } else if (distanceDelta < -0.15) {
+                } else if (distanceDelta < -0.1) {
                     message = ChatFormatCode.AQUA_STRING + "Getting Cooler";
-                } else if (distanceDelta > 1.0) {
+                } else if (distanceDelta > 1.1) {
                     message = ChatFormatCode.RED_STRING + ChatFormatCode.BOLD_STRING + "Getting Extremly Hot";
-                } else if (distanceDelta > 0.7) {
+                } else if (distanceDelta > 0.6) {
                     message = ChatFormatCode.RED_STRING + "Getting Hotter";
-                } else if (distanceDelta > 0.15) {
+                } else if (distanceDelta > 0.1) {
                     message = ChatFormatCode.YELLOW_STRING + "Getting Warmer";
                 } else {
                     double dist = playerPos.distance(randomPos);
@@ -164,9 +164,9 @@ public class HideAndSeekListener implements MCListener {
                 distanceDelta = 0.0;
 
                 a++;
-                if (a % 2 == 0) {
+                //if (a % 1 == 0) {
                     client.send(listener, new SayCommand(message));
-                }
+                //}
 
                 try {
                     Thread.sleep(500);
