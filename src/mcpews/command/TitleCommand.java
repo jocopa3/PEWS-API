@@ -14,7 +14,7 @@ import mcpews.message.MCCommand;
  *
  * @author Jocopa3
  */
-public class EnchantCommand extends MCCommand {
+public class TitleCommand extends MCCommand {
     
     public static class EnchantByIdInput extends CommandInput {
         
@@ -52,14 +52,14 @@ public class EnchantCommand extends MCCommand {
         }
     }
     
-    public EnchantCommand(EnchantByNameInput input) {
+    public TitleCommand(EnchantByNameInput input) {
         setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.ENCHANT.getName());
         setVersion(1);
     }
     
-    public EnchantCommand(EnchantByIdInput input) {
+    public TitleCommand(EnchantByIdInput input) {
         setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.ENCHANT.getName());

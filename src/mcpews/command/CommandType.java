@@ -18,6 +18,9 @@ public enum CommandType {
 
     CLOSE_WEBSOCKET("closewebsocket", CloseWebSocketCommand.class, CloseWebSocketResponse.class),
     CONNECT("connect", WSServerCommand.class, WSServerResponse.class),
+    ENCHANT("enchant", EnchantCommand.class, EnchantResponse.class),
+    EXECUTE("execute", ExecuteCommand.class, MCResponse.class),
+    FILL("fill", FillCommand.class, FillResponse.class),
     LIST("list", ListCommand.class, ListResponse.class),
     LISTD("listd", ListDetailCommand.class, ListDetailResponse.class),
     SAY("say", SayCommand.class, SayResponse.class),
@@ -64,6 +67,8 @@ public enum CommandType {
     }
 
     public static CommandType fromChatString(String chat) {
+        chat = chat.trim();
+        
         if (chat.startsWith("/")) {
             chat = chat.replaceFirst("/", "");
         }

@@ -18,16 +18,16 @@ public class TimeSetCommand extends MCCommand {
         day;
     }
     
-    public class TimeSetByNumberInput extends CommandInput {
+    public static class TimeSetByNumberInput extends CommandInput {
         int time;
 
-        public TimeSetByNumberInput(int time) {
+        public TimeSetByNumberInput(Integer time) {
             overloadName = "byNumber";
             this.time = time;
         }
     }
     
-    public class TimeSetByNameInput extends CommandInput {
+    public static class TimeSetByNameInput extends CommandInput {
         String time;
 
         public TimeSetByNameInput(TimeOfDay time) {
@@ -41,22 +41,15 @@ public class TimeSetCommand extends MCCommand {
         }
     }
 
-    public TimeSetCommand(Integer time) {
-        setInput(new TimeSetByNumberInput(time));
+    public TimeSetCommand(TimeSetByNameInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.TIME_SET.getName());
         setVersion(1);
     }
     
-    public TimeSetCommand(TimeOfDay time) {
-        setInput(new TimeSetByNameInput(time));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.TIME_SET.getName());
-        setVersion(1);
-    }
-    
-    public TimeSetCommand(String time) {
-        setInput(new TimeSetByNameInput(time));
+    public TimeSetCommand(TimeSetByNumberInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.TIME_SET.getName());
         setVersion(1);

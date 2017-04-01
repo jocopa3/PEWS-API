@@ -13,7 +13,7 @@ import mcpews.message.MCCommand;
  */
 public class SayCommand extends MCCommand {
     
-    public class SayCommandInput extends CommandInput {
+    public static class SayCommandInput extends CommandInput {
         String message;
         
         public SayCommandInput(String message) {
@@ -21,8 +21,8 @@ public class SayCommand extends MCCommand {
         }
     }
     
-    public SayCommand(String message) {
-        setInput(new SayCommandInput(message));
+    public SayCommand(SayCommandInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.SAY.getName());
         setVersion(1);  

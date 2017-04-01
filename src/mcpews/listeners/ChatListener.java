@@ -15,13 +15,10 @@ import java.util.Scanner;
 import mcpews.MCClient;
 import mcpews.MCListener;
 import mcpews.MCSocketServer;
-import mcpews.command.ListDetailCommand;
 import mcpews.command.SayCommand;
-import mcpews.command.SummonCommand;
 import mcpews.event.EventType;
 import mcpews.event.PlayerMessageEvent;
 import mcpews.logger.LogLevel;
-import mcpews.mcenum.EntityType;
 import mcpews.message.MCCommand;
 import mcpews.message.MCEvent;
 import mcpews.message.MCMessage;
@@ -49,7 +46,7 @@ public class ChatListener implements MCListener {
         }
 
         // Create a new /say command and send it to the client
-        MCCommand say = new SayCommand(message);
+        MCCommand say = new SayCommand(new SayCommand.SayCommandInput(message));
         client.send(this, say);
     }
 
@@ -61,14 +58,12 @@ public class ChatListener implements MCListener {
             return;
         }
 
-        // Create a new /say command
-        MCCommand say = new SayCommand(message);
+        MCCommand say = new SayCommand(new SayCommand.SayCommandInput(message));
 
-        // Send the command to all connected clients except the sender
         Collection<MCClient> clients = server.getClients();
+        
         synchronized (clients) {
             for (MCClient client : clients) {
-                // Ignore if the client is the sender
                 if (!client.equals(sender)) {
                     client.send(this, say);
                 }
@@ -87,10 +82,7 @@ public class ChatListener implements MCListener {
         // Subscribe to player message events to recieve messages from the client
         client.subscribeToEvent(EventType.PLAYER_MESSAGE);
 
-        // Send a greeting to the newly connected client
         sendMessageToClient(client, "§eWelcome to §bPEWS§e chat! Say hi!");
-
-        // Inform other clients someone has connected
         sendMessageToOthers(client, "§eSomeone has joined the chat!");
     }
 
@@ -116,7 +108,7 @@ public class ChatListener implements MCListener {
                 if (event instanceof PlayerMessageEvent) {
                     PlayerMessageEvent pme = (PlayerMessageEvent) event;
 
-                    // Ignore the event if the sender is named External
+                    // Ignore messages from External which are sent by the WebSocket server
                     if (!pme.getSender().equals("External")) {
                         sendMessageToOthers(client, pme.getSender() + ": " + pme.getMessage());
                     }
@@ -168,7 +160,7 @@ public class ChatListener implements MCListener {
     // Proper way to stop a server
     public static void stopServer(MCSocketServer server) {
         server.getLog().log(Level.INFO, "Stopping server: {0}:" + server.getAddress().getPort(), server.getAddress().getHostString());
-        MCCommand cm = new SayCommand("§cPEWS chat server is shutting down...");
+        MCCommand cm = new SayCommand(new SayCommand.SayCommandInput("§cPEWS chat server is shutting down..."));
 
         Collection<MCClient> con = server.getClients();
         synchronized (con) {

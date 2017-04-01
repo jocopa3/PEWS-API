@@ -15,7 +15,7 @@ import mcpews.message.MCCommand;
  */
 public class SummonCommand extends MCCommand {
 
-    public class SummonCommandInput extends CommandInput {
+    public static class SummonCommandInput extends CommandInput {
 
         String entityType;
         BlockPos spawnPos;
@@ -28,27 +28,20 @@ public class SummonCommand extends MCCommand {
             this.entityType = entity;
             this.spawnPos = pos;
         }
+
+        public SummonCommandInput(EntityType entity) {
+            this(entity.getName());
+        }
+        
+        public SummonCommandInput(EntityType entity, BlockPos pos) {
+            this(entity.getName(), pos);
+        }
     }
 
-    public SummonCommand(String entity) {
-        setInput(new SummonCommandInput(entity));
+    public SummonCommand(SummonCommandInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.SUMMON.getName());
         setVersion(1);
-    }
-
-    public SummonCommand(String entity, BlockPos pos) {
-        setInput(new SummonCommandInput(entity, pos));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SUMMON.getName());
-        setVersion(1);
-    }
-    
-    public SummonCommand(EntityType entity) {
-        this(entity.getName());
-    }
-    
-    public SummonCommand(EntityType entity, BlockPos pos) {
-        this(entity.getName(), pos);
     }
 }

@@ -21,8 +21,8 @@ public class WSServerCommand extends MCCommand {
         }
     }
     
-    public WSServerCommand(String uri) {
-        setInput(new WSServerCommandInput(uri));
+    public WSServerCommand(WSServerCommandInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.WSSERVER.getName());
         setVersion(1);  

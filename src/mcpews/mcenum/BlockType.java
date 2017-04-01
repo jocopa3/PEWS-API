@@ -74,7 +74,7 @@ public enum BlockType {
     WOOL_WHITE("wool", "white", 35, 0),
     WOOL_ORANGE("wool", "orange", 35, 1),
     WOOL_MAGENTA("wool", "magenta", 35, 2),
-    WOOL_LIGHTBLUE("wool", "lightBlue", 35,  3),
+    WOOL_LIGHTBLUE("wool", "lightBlue", 35, 3),
     WOOL_YELLOW("wool", "yellow", 35, 4),
     WOOL_LIME("wool", "lime", 35, 5),
     WOOL_PINK("wool", "pink", 35, 6),
@@ -223,6 +223,7 @@ public enum BlockType {
     SPRUCE_STAIRS("spruce_stairs", 134),
     BIRCH_STAIRS("birch_stairs", 135),
     JUNGLE_STAIRS("jungle_stairs", 136),
+    COMMAND_BLOCK("command_block", 137),
     BEACON("beacon", 138),
     COBBLESTONE_WALL("cobblestone_wall", 139),
     COBBLESTONE_WALL_MOSSY("cobblestone_wall", "mossy", 139, 1),
@@ -344,6 +345,8 @@ public enum BlockType {
     JUNGLE_FENCE_GATE("jungle_fence_gate", 185),
     DARK_OAK_FENCE_GATE("dark_oak_fence_gate", 186),
     ACACIA_FENCE_GATE("acacia_fence_gate", 187),
+    REPEATING_COMMAND_BLOCK("repeating_command_block", 188),
+    CHAIN_COMMAND_BLOCK("chain_command_block", 189),
     SPRUCE_DOOR("spruce_door", 193),
     BIRCH_DOOR("birch_door", 194),
     JUNGLE_DOOR("jungle_door", 195),
@@ -405,16 +408,16 @@ public enum BlockType {
     static {
         fromName = new HashMap<>();
         fromId = new HashMap<>();
-        
+
         for (BlockType block : values()) {
             HashMap<Integer, BlockType> blockMap = fromName.get(block.getName());
-            
+
             if (blockMap == null) {
                 blockMap = new HashMap<>();
                 fromName.put(block.getName(), blockMap);
-                fromId.put(block.getId(), blockMap);                                
+                fromId.put(block.getId(), blockMap);
             }
-            
+
             blockMap.put(block.getData(), block);
         }
     }
@@ -449,18 +452,27 @@ public enum BlockType {
         return data;
     }
 
+    @Override
+    public String toString() {
+        if (subName.equals("default")) {
+            return name;
+        }
+        
+        return subName + " " + name;
+    }
+
     public static BlockType fromString(String name) {
         return fromName.get(name).get(0);
     }
-    
+
     public static BlockType fromString(String name, int data) {
         return fromName.get(name).get(data);
     }
-    
+
     public static BlockType fromId(int id) {
         return fromId.get(id).get(0);
     }
-    
+
     public static BlockType fromId(int id, int data) {
         return fromId.get(id).get(data);
     }
