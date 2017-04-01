@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class CommandTarget {
 
     public enum TargetSelector {
+
         ALL_ENTITIES("allEntities", 'e'),
         ALL_PLAYERS("allPlayers", 'a'),
         NEAREST_PLAYER("nearestPlayer", 'p'),
@@ -59,14 +60,34 @@ public class CommandTarget {
     }
 
     public enum RuleType {
-        name, // Entity/Player name
-        type, // Entity type
-        r,    // Max Radius
-        rm,   // Min Radius
-        m,    // Gamemode
-        x,    // X-pos
-        y,    // Y-pos
-        z;    // Z-pos
+
+        name("Name"), // Entity/Player name
+        type("Type"), // Entity type
+        r("Max Radius"), // Max Radius
+        rm("Min Radius"), // Min Radius
+        m("Game Mode"), // Gamemode
+        x("X-Pos"), // X-pos
+        y("Y-Pos"), // Y-pos
+        z("Z-Pos");    // Z-pos
+
+        private transient String description;
+
+        private static HashMap<String, RuleType> fromString;
+
+        static {
+            fromString = new HashMap<>();
+            for (RuleType rule : values()) {
+                fromString.put(rule.name(), rule);
+            }
+        }
+
+        RuleType(String desc) {
+            description = desc;
+        }
+
+        public static RuleType fromString(String type) {
+            return fromString.get(type);
+        }
     }
 
     public class TargetRule {
@@ -85,14 +106,46 @@ public class CommandTarget {
             this.value = value;
             this.inverted = inverted;
         }
+
+        public RuleType getRule() {
+            return RuleType.fromString(name);
+        }
+
+        @Override
+        public String toString() {
+            RuleType rule = getRule();
+            String val = rule.description + (inverted ? " != " : " = ");
+
+            switch (rule) {
+                case m:
+                    switch (value) {
+                        case "0":
+                        case "s":
+                            val += "Survival";
+                            break;
+                        case "1":
+                        case "c":
+                            val += "Creative";
+                            break;
+                        default:
+                            val += "Invalid";
+                            break;
+                    }
+                    break;
+                default:
+                    val += value;
+            }
+
+            return val;
+        }
     }
 
     private String selector;
     private ArrayList<TargetRule> rules;
 
-    JsonParser parser = new JsonParser();
-    private Pattern outerQuotes = Pattern.compile("(((?<=[\\[,])\\s*)|(?<=[a-zA-Z0-9_])\\s*(?=[,\\]]))");
-    private Pattern innerQuotes = Pattern.compile("\\s*=\\s*");
+    private static final JsonParser parser = new JsonParser();
+    private static final Pattern outerQuotes = Pattern.compile("(((?<=[\\[,])\\s*)|(?<=[a-zA-Z0-9_])\\s*(?=[,\\]]))");
+    private static final Pattern innerQuotes = Pattern.compile("\\s*=\\s*");
 
     public CommandTarget(String targetString) {
 
@@ -115,8 +168,8 @@ public class CommandTarget {
 
                     for (Entry<String, JsonElement> entry : ele.entrySet()) {
                         String value = entry.getValue().getAsString();
-                        if(value.startsWith("!")) {
-                            addRule(entry.getKey(), value.substring(value.indexOf('!')+1), true);
+                        if (value.startsWith("!")) {
+                            addRule(entry.getKey(), value.substring(value.indexOf('!') + 1), true);
                         } else {
                             addRule(entry.getKey(), value);
                         }
@@ -129,11 +182,11 @@ public class CommandTarget {
             }
         }
     }
-    
+
     public CommandTarget(TargetSelector selector, TargetRule... rules) {
         this.selector = selector.getTypeString();
-        
-        for(TargetRule rule : rules) {
+
+        for (TargetRule rule : rules) {
             addRule(rule);
         }
     }
@@ -142,7 +195,7 @@ public class CommandTarget {
         if (rules == null) {
             rules = new ArrayList<>();
         }
-        System.out.println(rule.name + (rule.inverted ? " != " : " = ") + rule.value);
+
         rules.add(rule);
     }
 
@@ -153,7 +206,7 @@ public class CommandTarget {
     public void addRule(String name, String value, boolean inverted) {
         addRule(new TargetRule(name, value, inverted));
     }
-    
+
     public void addRule(RuleType type, String value) {
         addRule(new TargetRule(type.name(), value));
     }
@@ -170,7 +223,27 @@ public class CommandTarget {
         return rules.toArray(new TargetRule[0]);
     }
 
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append("Selector: ").append(selector).append("; Rules: ");
+        int i;
+        for (i = 0; i < rules.size() - 1; i++) {
+            b.append(rules.get(0).toString()).append(", ");
+        }
+
+        b.append(rules.get(i).toString());
+
+        return b.toString();
+    }
+
     public static void main(String[] args) {
-        CommandTarget target = new CommandTarget("@e[type=sheep]");
+        String target1 = "@e[type=!sheep,r=10]";
+        String target2 = "@p[m=s]";
+
+        CommandTarget tar1 = new CommandTarget(target1);
+        CommandTarget tar2 = new CommandTarget(target2);
+
+        System.out.println("Target 1:\n" + tar1);
+        System.out.println("Target 2:\n" + tar2);
     }
 }

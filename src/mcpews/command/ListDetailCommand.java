@@ -19,14 +19,14 @@ public class ListDetailCommand extends MCCommand {
         uuids;
     }
     
-    private class ListDetailsInput extends CommandInput {
+    public static class ListDetailsInput extends CommandInput {
         private String details;
         
-        private ListDetailsInput(Detail detail) {
-            details = detail.name();
+        public ListDetailsInput(Detail detail) {
+            this(detail.name());
         }
         
-        private ListDetailsInput(String detail) {
+        public ListDetailsInput(String detail) {
             details = detail;
         }
     }
@@ -39,19 +39,8 @@ public class ListDetailCommand extends MCCommand {
         );
     }
     
-    public ListDetailCommand(Detail detail) {
-        super();
-        
-        setInput(new ListDetailsInput(detail));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.LISTD.getName());
-        setVersion(1);
-    }
-    
-    public ListDetailCommand(String detail) {
-        super();
-        
-        setInput(new ListDetailsInput(detail));
+    public ListDetailCommand(ListDetailsInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.LISTD.getName());
         setVersion(1);

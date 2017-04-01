@@ -19,11 +19,11 @@ public class TimeQueryCommand extends MCCommand {
         day;
     }
     
-    public class TimeQueryCommandInput extends CommandInput {
+    public static class TimeQueryCommandInput extends CommandInput {
         String time;
         
         public TimeQueryCommandInput(TimeType time) {
-            this.time = time.name();
+            this(time.name());
         }
         
         public TimeQueryCommandInput(String time) {
@@ -31,15 +31,8 @@ public class TimeQueryCommand extends MCCommand {
         }
     }
     
-    public TimeQueryCommand(String time) {
-        setInput(new TimeQueryCommandInput(time));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.TIME_QUERY.getName());
-        setVersion(1);  
-    }
-    
-    public TimeQueryCommand(TimeType time) {
-        setInput(new TimeQueryCommandInput(time));
+    public TimeQueryCommand(TimeQueryCommandInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.TIME_QUERY.getName());
         setVersion(1);  

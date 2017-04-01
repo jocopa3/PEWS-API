@@ -13,16 +13,16 @@ import mcpews.message.MCCommand;
  */
 public class TimeAddCommand extends MCCommand {
     
-    public class TimeAddCommandInput extends CommandInput {
+    public static class TimeAddCommandInput extends CommandInput {
         int amount;
         
-        public TimeAddCommandInput(int amount) {
+        public TimeAddCommandInput(Integer amount) {
             this.amount = amount;
         }
     }
     
-    public TimeAddCommand(Integer amount) {
-        setInput(new TimeAddCommandInput(amount));
+    public TimeAddCommand(TimeAddCommandInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.TIME_ADD.getName());
         setVersion(1);

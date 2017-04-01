@@ -1,8 +1,6 @@
 package mcpews.listeners;
 
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mcpews.MCClient;
 import mcpews.MCListener;
 import mcpews.MCSocketServer;
@@ -120,14 +118,14 @@ public class HideAndSeekListener implements MCListener {
             playing = true;
             randomPos = randomPos();
             playerPos = new BlockPos(10000, 10000, 10000);
-            client.send(listener, new SetBlockCommand(randomPos, BlockType.DIAMOND_BLOCK));
+            client.send(listener, new SetBlockCommand(new SetBlockCommand.SetBlockInput(randomPos, BlockType.DIAMOND_BLOCK)));
         }
 
         @Override
         public void run() {
             int a = 0;
             while (playing) {
-                client.send(listener, new TestForBlockCommand(randomPos, BlockType.DIAMOND_BLOCK));
+                client.send(listener, new TestForBlockCommand(new TestForBlockCommand.TestForBlockInput(randomPos, BlockType.DIAMOND_BLOCK)));
 
                 String message;
 
@@ -165,7 +163,7 @@ public class HideAndSeekListener implements MCListener {
 
                 a++;
                 if (a % 2 == 0) {
-                    client.send(listener, new SayCommand(message));
+                    client.send(listener, new SayCommand(new SayCommand.SayCommandInput(message)));
                 }
 
                 try {
@@ -174,7 +172,7 @@ public class HideAndSeekListener implements MCListener {
                 }
             }
 
-            client.send(listener, new SayCommand(ChatFormatCode.GREEN_STRING + "You won!"));
+            client.send(listener, new SayCommand(new SayCommand.SayCommandInput(ChatFormatCode.GREEN_STRING + "You won!")));
             listener.finishGame(client);
         }
 

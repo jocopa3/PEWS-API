@@ -36,9 +36,9 @@ public class CommandsListener implements MCListener {
                     if (pme.getMessage().toLowerCase().equals("blow me up")
                             || pme.getMessage().toLowerCase().equals("send me to space")) {
                         SummonCommand tnt;
-                        client.send(this, new SayCommand("Boom goes the dynamite"));
+                        client.send(this, new SayCommand(new SayCommand.SayCommandInput("Boom goes the dynamite")));
                         for (int i = 0; i < 100; i++) {
-                            tnt = new SummonCommand(EntityType.TNT);
+                            tnt = new SummonCommand(new SummonCommand.SummonCommandInput(EntityType.TNT));
                             client.send(this, tnt);
                         }
                         return;
@@ -49,32 +49,32 @@ public class CommandsListener implements MCListener {
                         String entity = pme.getMessage().toLowerCase().replaceFirst("spawn ", "");
                         EntityType entityT = EntityType.fromString(entity);
                         if (entityT == null) {
-                            client.send(this, new SayCommand("\"" + entity + "\" is not a valid entity name"));
+                            client.send(this, new SayCommand(new SayCommand.SayCommandInput("\"" + entity + "\" is not a valid entity name")));
                             return;
                         }
-                        client.send(this, new SayCommand("Spawning " + entity));
-                        tnt = new SummonCommand(EntityType.fromString(entity));
+                        client.send(this, new SayCommand(new SayCommand.SayCommandInput("Spawning " + entity)));
+                        tnt = new SummonCommand(new SummonCommand.SummonCommandInput(EntityType.fromString(entity)));
                         client.send(this, tnt);
                         return;
                     }
 
                     if (pme.getMessage().toLowerCase().equals("day pls")) {
-                        client.send(this, new SayCommand("Makin it day time"));
-                        client.send(this, new TimeSetCommand(TimeOfDay.day));
+                        client.send(this, new SayCommand(new SayCommand.SayCommandInput("Makin it day time")));
+                        client.send(this, new TimeSetCommand(new TimeSetCommand.TimeSetByNameInput(TimeOfDay.day)));
                         return;
                     }
 
                     if (pme.getMessage().toLowerCase().equals("night pls")) {
-                        client.send(this, new SayCommand("Makin it night time"));
-                        client.send(this, new TimeSetCommand(TimeOfDay.night));
+                        client.send(this, new SayCommand(new SayCommand.SayCommandInput("Makin it night time")));
+                        client.send(this, new TimeSetCommand(new TimeSetCommand.TimeSetByNameInput(TimeOfDay.night)));
                         return;
                     }
 
                     if (pme.getMessage().toLowerCase().equals("all")) {
                         SummonCommand tnt;
-                        client.send(this, new SayCommand("Spawning all entities"));
+                        client.send(this, new SayCommand(new SayCommand.SayCommandInput("Spawning all entities")));
                         for (EntityType type : EntityType.values()) {
-                            tnt = new SummonCommand(type);
+                            tnt = new SummonCommand(new SummonCommand.SummonCommandInput(type));
                             client.send(this, tnt);
                         }
                         return;

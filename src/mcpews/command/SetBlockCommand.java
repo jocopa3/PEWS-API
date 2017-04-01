@@ -21,74 +21,49 @@ public class SetBlockCommand extends MCCommand {
         replace;
     }
 
-    private class SetBlockInput extends CommandInput {
+    public static class SetBlockInput extends CommandInput {
 
         private BlockPos position;
         private String tileName;
         private int tileData;
         private String oldBlockHandling;
 
-        private SetBlockInput(BlockPos pos, BlockType block) {
+        public SetBlockInput(BlockPos pos, BlockType block) {
             position = pos;
             tileName = block.getName();
             tileData = block.getData();
         }
 
-        private SetBlockInput(BlockPos pos, BlockType block, OldBlockHandling blockHandling) {
-            position = pos;
-            tileName = block.getName();
-            tileData = block.getData();
-            oldBlockHandling = blockHandling.name();
+        public SetBlockInput(BlockPos pos, BlockType block, OldBlockHandling blockHandling) {
+            this(pos, block, blockHandling.name());
         }
         
-        private SetBlockInput(BlockPos pos, BlockType block, String blockHandling) {
+        public SetBlockInput(BlockPos pos, BlockType block, String blockHandling) {
             position = pos;
             tileName = block.getName();
             tileData = block.getData();
             oldBlockHandling = blockHandling;
         }
+        
+        public SetBlockInput(BlockPos pos, String blockId) {
+            this(pos, BlockType.fromString(blockId));
+        }
+        
+        public SetBlockInput(BlockPos pos, String blockId, Integer data) {
+            this(pos, BlockType.fromString(blockId, data));
+        }
+        
+        public SetBlockInput(BlockPos pos, String blockId, OldBlockHandling handling) {
+            this(pos, BlockType.fromString(blockId), handling);
+        }
+        
+        public SetBlockInput(BlockPos pos, String blockId, Integer data, String handling) {
+            this(pos, BlockType.fromString(blockId, data), handling);
+        }
     }
 
-    public SetBlockCommand(BlockPos pos, BlockType block) {
-        super();
-
-        setInput(new SetBlockInput(pos, block));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SETBLOCK.getName());
-        setVersion(1);
-    }
-
-    public SetBlockCommand(BlockPos pos, BlockType block, OldBlockHandling handling) {
-        super();
-
-        setInput(new SetBlockInput(pos, block, handling));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SETBLOCK.getName());
-        setVersion(1);
-    }
-    
-    public SetBlockCommand(BlockPos pos, String block) {
-        super();
-
-        setInput(new SetBlockInput(pos, BlockType.fromString(block)));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SETBLOCK.getName());
-        setVersion(1);
-    }
-    
-    public SetBlockCommand(BlockPos pos, String block, Integer data) {
-        super();
-
-        setInput(new SetBlockInput(pos, BlockType.fromString(block, data)));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.SETBLOCK.getName());
-        setVersion(1);
-    }
-    
-    public SetBlockCommand(BlockPos pos, String block, Integer data, String oldBlockHandling) {
-        super();
-
-        setInput(new SetBlockInput(pos, BlockType.fromString(block, data), oldBlockHandling));
+    public SetBlockCommand(SetBlockInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.SETBLOCK.getName());
         setVersion(1);

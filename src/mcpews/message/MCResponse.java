@@ -36,4 +36,13 @@ public class MCResponse extends MCBody {
     public String getStatusMessage() {
         return statusMessage;
     }
+    
+    @Override
+    public String toString() {
+        if(statusMessage != null) {
+            return statusMessage;
+        }
+        
+        return "";
+    }
 }

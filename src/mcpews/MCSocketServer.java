@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mcpews.logger.LogLevel;
-import mcpews.message.ListenerRequest;
 import mcpews.message.MCCommand;
 import mcpews.message.MCMessage;
 import mcpews.message.MessagePurposeType;
@@ -79,8 +78,10 @@ public class MCSocketServer extends WebSocketServer {
             return;
         }
 
+        boolean shouldSendWaitlisted = true;
+
         MCMessage mess;
-        ListenerRequest request = null;
+        MCClient.ListenerRequest request = null;
 
         MCClient client = clients.get(conn);
 
@@ -112,6 +113,13 @@ public class MCSocketServer extends WebSocketServer {
                                 ((MCCommand) requestMessage.getBody()).getName());
                         body.addProperty(ResponseSerializer.PROPERTY_HINT_OVERLOAD,
                                 ((MCCommand) requestMessage.getBody()).getOverload());
+
+                        if (statusCode == 131075) {
+                            request.resetTimer();
+                            shouldSendWaitlisted = false;
+                        } else {
+                            client.removeRequest(requestId);
+                        }
                     }
                 } else {
                     throw new Exception("Response with no corresponding request");
@@ -121,6 +129,19 @@ public class MCSocketServer extends WebSocketServer {
                         .get("requestId").getAsString());
 
                 request = client.getRequestByUUID(requestId);
+
+                JsonObject body = messageJson.get("body").getAsJsonObject();
+                JsonElement statusCodeJson = body.get("statusCode");
+
+                if (statusCodeJson != null && request != null) {
+                    int statusCode = statusCodeJson.getAsInt();
+
+                    if (statusCode == -2147418109) {
+                        //System.out.println("Resending: " + requestId);
+                        request.addToWaitList();
+                        shouldSendWaitlisted = false;
+                    }
+                }
             }
 
             mess = MCMessage.getAsMessage(messageJson);
@@ -136,8 +157,11 @@ public class MCSocketServer extends WebSocketServer {
             return;
         }
 
-        //System.out.println(message);
+        if (shouldSendWaitlisted && (mess.getPurpose() != MessagePurposeType.EVENT)) {
+            client.sendWaitlisted();
+        }
 
+        //System.out.println(message);
         // If the request was made by a specific listener, send the response directly to it
         if (request != null && request.getRequestor() != null) {
             switch (mess.getPurpose()) {
@@ -154,6 +178,7 @@ public class MCSocketServer extends WebSocketServer {
         } else {
             switch (mess.getPurpose()) {
                 case EVENT:
+                    System.out.println(message);
                     for (MCListener l : listeners) {
                         l.onEvent(client, mess);
                     }

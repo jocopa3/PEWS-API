@@ -15,41 +15,29 @@ import mcpews.message.MCCommand;
  */
 public class TestForBlockCommand extends MCCommand {
 
-    private class TestForBlockInput extends CommandInput {
+    public static class TestForBlockInput extends CommandInput {
 
         private BlockPos position;
         private String tileName;
         private int dataValue;
 
-        private TestForBlockInput(BlockPos pos, BlockType block) {
+        public TestForBlockInput(BlockPos pos, String block) {
+            this(pos, block, 0);
+        }
+        
+        public TestForBlockInput(BlockPos pos, String block, Integer data) {
             position = pos;
-            tileName = block.getName();
-            dataValue = block.getData();
+            tileName = block;
+            dataValue = data;
+        }
+        
+        public TestForBlockInput(BlockPos pos, BlockType block) {
+            this(pos, block.getName(), block.getData());
         }
     }
 
-    public TestForBlockCommand(BlockPos pos, BlockType block) {
-        super();
-
-        setInput(new TestForBlockInput(pos, block));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.TESTFORBLOCK.getName());
-        setVersion(1);
-    }
-
-    public TestForBlockCommand(BlockPos pos, String block) {
-        super();
-
-        setInput(new TestForBlockInput(pos, BlockType.fromString(block)));
-        setOrigin(new BasicOrigin("player"));
-        setName(CommandType.TESTFORBLOCK.getName());
-        setVersion(1);
-    }
-    
-    public TestForBlockCommand(BlockPos pos, String block, Integer data) {
-        super();
-
-        setInput(new TestForBlockInput(pos, BlockType.fromString(block, data)));
+    public TestForBlockCommand(TestForBlockInput input) {
+        setInput(input);
         setOrigin(new BasicOrigin("player"));
         setName(CommandType.TESTFORBLOCK.getName());
         setVersion(1);
