@@ -183,8 +183,6 @@ public class ChatListener implements MCListener {
         try {
             // Give the server 5 seconds to fully shutdown
             server.stop(5000);
-        } catch (IOException ex) {
-            server.getLog().log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             server.getLog().log(Level.SEVERE, "Server shutdown was interrupted.", ex);
         }

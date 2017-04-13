@@ -11,9 +11,13 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -24,6 +28,9 @@ import mcpews.message.MCMessage;
 import mcpews.message.MessagePurposeType;
 import mcpews.message.ResponseSerializer;
 import org.java_websocket.WebSocket;
+import org.java_websocket.drafts.Draft;
+import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
@@ -38,9 +45,16 @@ public class MCSocketServer extends WebSocketServer {
     private ConcurrentHashMap<WebSocket, MCClient> clients;
 
     public static final Logger messageLogger = Logger.getLogger("PEWS-MessageLog");
+    private static final ArrayList<Draft> drafts;
+
+    static {
+        drafts = new ArrayList<>();
+        drafts.add(new WSEncrypt()); // RFC 6455 with subprotocol com.microsoft.minecraft.wsencrypt; encrypted
+        drafts.add(new Draft_17()); // Default RFC 6455 protocol; no encryption
+    }
 
     public MCSocketServer(InetSocketAddress address) {
-        super(address);
+        super(address, drafts);
 
         listeners = new ArrayList<>();
         clients = new ConcurrentHashMap<>();
@@ -48,10 +62,14 @@ public class MCSocketServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        messageLogger.log(Level.INFO, "New connection: {0}", conn.getRemoteSocketAddress().getHostString() + ":" + conn.getRemoteSocketAddress().getPort());
-
         MCClient client = new MCClient(conn);
         clients.put(conn, client);
+
+        messageLogger.log(Level.INFO, "New connection: {0}; Encryption Status: {1}",
+                new Object[] {
+                    conn.getRemoteSocketAddress().getHostString() + ":" + conn.getRemoteSocketAddress().getPort(),
+                    (client.requiresEncryption() ? "required" : "none")
+                });
 
         for (MCListener l : listeners) {
             l.onConnected(client);
@@ -72,6 +90,8 @@ public class MCSocketServer extends WebSocketServer {
 
     private JsonParser parser = new JsonParser();
 
+    // TODO: split this function up so it isn't a cluttered mess
+    // TODO: add process queue (if Java-WebSocket doesn't implement one already)
     @Override
     public void onMessage(WebSocket conn, String message) {
         if (message == null) {
@@ -84,6 +104,10 @@ public class MCSocketServer extends WebSocketServer {
         MCClient.ListenerRequest request = null;
 
         MCClient client = clients.get(conn);
+
+        if (client.requiresEncryption()) {
+            //message = client.decryptMessage(message);
+        }
 
         try {
             JsonObject messageJson = parser.parse(message).getAsJsonObject();
@@ -234,6 +258,11 @@ public class MCSocketServer extends WebSocketServer {
         messageLogger.log(Level.INFO, "Starting server on: {0}:" + getAddress().getPort(), new Object[]{getAddress().getHostString()});
 
         super.run();
+    }
+
+    @Override
+    public void onFragment(WebSocket conn, Framedata data) {
+        System.out.println(Arrays.toString(data.getPayloadData().array()));
     }
 
     public Collection<MCClient> getClients() {

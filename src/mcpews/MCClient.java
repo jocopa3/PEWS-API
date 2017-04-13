@@ -5,6 +5,7 @@
  */
 package mcpews;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,6 +13,8 @@ import java.util.Queue;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mcpews.command.CloseWebSocketCommand;
 import mcpews.event.EventType;
 import mcpews.message.*;
@@ -25,6 +28,7 @@ import org.java_websocket.framing.CloseFrame;
 public class MCClient {
 
     private final WebSocket socket;
+    private final boolean requiresEncryption;
     private final String clientName;
 
     private ArrayList<EventType> subscribedEvents;
@@ -38,17 +42,26 @@ public class MCClient {
     private int requestTimeout = 60000; // Wait 60 seconds before kicking out requests
 
     public MCClient(WebSocket socket) {
+        this(socket, socket.getDraft() instanceof WSEncrypt);
+    }
+
+    public MCClient(WebSocket socket, boolean encrypted) {
         subscribedEvents = new ArrayList<>();
         requestQuery = new HashMap<>();
         requestWaitList = new LinkedList<>();
         requestTimer = new Timer();
 
         this.socket = socket;
+        this.requiresEncryption = encrypted;
         clientName = socket.getRemoteSocketAddress().getHostString() + ":" + socket.getRemoteSocketAddress().getPort();
     }
 
     public WebSocket getSocket() {
         return socket;
+    }
+
+    public boolean requiresEncryption() {
+        return requiresEncryption;
     }
 
     public void subscribeToEvent(EventType event) {
@@ -91,6 +104,30 @@ public class MCClient {
         closeClientSide();
     }
 
+    /*
+    public String decryptMessage(String message) {
+        try {
+            byte[] bytes = Base64.decode(message);
+        } catch (Base64DecodingException ex) {
+            Logger.getLogger(MCClient.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+
+        return "";
+    }
+
+    public String encrypttMessage(String message) {
+        String encrypted;
+        try {
+            encrypted = Base64.encode(message.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            encrypted = Base64.encode(message.getBytes());
+        }
+
+        return encrypted;
+    }
+     */
+    
     public void send(MCBody body) {
         send(null, body);
     }
@@ -104,10 +141,10 @@ public class MCClient {
     }
 
     public void send(MCListener listener, MCMessage message) {
-        if(message == null) {
+        if (message == null) {
             return;
         }
-        
+
         String messageJson = message.getMessageText();
         System.out.println(messageJson);
 

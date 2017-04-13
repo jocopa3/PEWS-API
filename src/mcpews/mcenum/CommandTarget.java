@@ -68,7 +68,7 @@ public class CommandTarget {
         m("Game Mode"), // Gamemode
         x("X-Pos"), // X-pos
         y("Y-Pos"), // Y-pos
-        z("Z-Pos");    // Z-pos
+        z("Z-Pos"); // Z-pos
 
         private transient String description;
 
@@ -126,6 +126,10 @@ public class CommandTarget {
                         case "1":
                         case "c":
                             val += "Creative";
+                            break;
+                        case "2":
+                        case "a":
+                            val += "Adventure";
                             break;
                         default:
                             val += "Invalid";
