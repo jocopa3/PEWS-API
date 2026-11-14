@@ -32,7 +32,7 @@ val desktopEnabled = providers.gradleProperty("pews.desktop")
 
 if (desktopEnabled) {
     val desktop = sourceSets.create("desktop") {
-        java.srcDir("src/desktop/java")
+        java.srcDir("desktop/src/java")
         compileClasspath += sourceSets.main.get().output
         compileClasspath += configurations.runtimeClasspath.get()
         runtimeClasspath += sourceSets.main.get().output
