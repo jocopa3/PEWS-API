@@ -2,14 +2,30 @@ package mcpews.response
 
 import mcpews.message.MCResponse
 
-class ListResponse : MCResponse() {
+open class ListResponse : MCResponse() {
+
     private var currentPlayerCount: Int = 0
     private var maxPlayerCount: Int = 0
     private var players: String? = null
 
-    fun currentPlayerCount(): Int = currentPlayerCount
-    fun maxPlayerCount(): Int = maxPlayerCount
-    fun players(): String? = players
+    open fun currentPlayerCount(): Int {
+        return currentPlayerCount
+    }
 
-    override fun toString(): String = statusMessage ?: ""
+    open fun maxPlayerCount(): Int {
+        return maxPlayerCount
+    }
+
+    open fun players(): String? {
+        return players
+    }
+
+    override fun toString(): String {
+        return returnAsJava(statusMessage)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> returnAsJava(value: Any?): T {
+        return value as T
+    }
 }

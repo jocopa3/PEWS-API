@@ -64,7 +64,8 @@ enum class Biome(
     SAVANNA_M(163, "Savanna M", BiomeType.HOT),
     SAVANNA_PLATEAU_M(164, "Savanna Plateau M", BiomeType.HOT),
     MESA_BRYCE(165, "Mesa (Bryce)", BiomeType.HOT),
-    MESA_PLATEAU_F_M(166, "Mesa Plateau F M", BiomeType.HOT);
+    MESA_PLATEAU_F_M(166, "Mesa Plateau F M", BiomeType.HOT),
+    MESA_PLATEAU_M(167, "Mesa Plateau M", BiomeType.HOT);
 
     fun getId(): Int = id
     fun getName(): String = biomeName

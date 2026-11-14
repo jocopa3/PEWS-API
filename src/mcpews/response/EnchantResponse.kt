@@ -2,10 +2,20 @@ package mcpews.response
 
 import mcpews.message.MCResponse
 
-class EnchantResponse : MCResponse() {
+open class EnchantResponse : MCResponse() {
+
     private var result: String? = null
 
-    fun result(): String? = result
+    open fun result(): String? {
+        return result
+    }
 
-    override fun toString(): String = statusMessage ?: ""
+    override fun toString(): String {
+        return returnAsJava(statusMessage)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> returnAsJava(value: Any?): T {
+        return value as T
+    }
 }

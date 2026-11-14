@@ -2,7 +2,7 @@ package mcpews.logger
 
 import java.util.logging.Level
 
-class LogLevel(name: String, level: Int) : Level(name, level) {
+open class LogLevel(name: String, level: Int) : Level(name, level) {
     companion object {
         @JvmField
         val CHAT = LogLevel("CHAT", Level.INFO.intValue() + 5)

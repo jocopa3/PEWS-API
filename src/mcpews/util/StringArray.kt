@@ -1,7 +1,8 @@
 package mcpews.util
 
-class StringArray(vararg strings: String) {
-    private val arr: Array<out String> = strings
+open class StringArray(vararg strings: String) {
+    @JvmField
+    internal val arr: Array<out String> = strings
 
     override fun toString(): String = arr.joinToString(" ")
 }

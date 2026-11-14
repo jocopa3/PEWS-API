@@ -3,10 +3,19 @@ package mcpews.response
 import mcpews.mcenum.BlockPos
 import mcpews.message.MCResponse
 
-class TestForBlockResponse : MCResponse() {
-    @JvmField var position: BlockPos? = null
-    @JvmField var matches: Boolean = false
+open class TestForBlockResponse : MCResponse() {
 
-    fun getPosition(): BlockPos? = position
-    fun matches(): Boolean = matches
+    @JvmField
+    internal var position: BlockPos? = null
+
+    @JvmField
+    internal var matches: Boolean = false
+
+    open fun getPosition(): BlockPos? {
+        return position
+    }
+
+    open fun matches(): Boolean {
+        return matches
+    }
 }
