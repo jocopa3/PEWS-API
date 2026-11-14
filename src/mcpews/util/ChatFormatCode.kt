@@ -54,6 +54,6 @@ open class ChatFormatCode {
         const val RESET_STRING: String = ESCAPE_STRING + "r"
 
         @JvmStatic
-        fun formatString(format: String, s: String): String = s.replaceAll(format, ESCAPE_STRING)
+        fun formatString(format: String, s: String): String = s.replace(format.toRegex(), ESCAPE_STRING)
     }
 }

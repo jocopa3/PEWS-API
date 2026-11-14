@@ -1,6 +1,6 @@
 plugins {
     java
-    kotlin("jvm") version "2.4.21"
+    kotlin("jvm")
 }
 
 group = "mcpews"
