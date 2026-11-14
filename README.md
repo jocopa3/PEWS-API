@@ -6,9 +6,15 @@ Minecraft uses WebSockets to communicate with external programs (such as the Cla
 
 Internally, Minecraft sends JSON messages through the WebSocket to communicate to servers. A basic outline of the JSON structure of each message can be found here: https://gist.github.com/jocopa3/54b42fb6361952997c4a6e38945e306f
 
-# Build Requirements
+# Build
 
-* [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) by TooTallNate
-* [GSON](https://github.com/google/gson) by Google
+This is a Gradle Java project; dependencies are managed by Gradle and can be imported directly into IntelliJ IDEA.
 
-Note: this project was built with JDK 1.8, but should be compatible with 1.7.
+* [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) `1.6.0`
+* [Gson](https://github.com/google/gson) `2.15.0`
+
+```bash
+./gradlew build
+```
+
+`lib/` 下的本地 jar 已移除。
