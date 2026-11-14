@@ -1,5 +1,6 @@
 plugins {
     java
+    kotlin("jvm") version "2.4.21"
 }
 
 group = "mcpews"
@@ -14,9 +15,19 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+provider {
+}.let {}
+
 sourceSets {
     main {
         java.srcDirs("src")
+        kotlin.srcDirs("src")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
     }
 }
 

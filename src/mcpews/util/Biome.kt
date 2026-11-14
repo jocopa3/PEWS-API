@@ -1,13 +1,10 @@
-package mcpews.util;
+package mcpews.util
 
-import java.util.HashMap;
-
-/**
- *
- * @author Jocopa3
- */
-public enum Biome {
-
+enum class Biome(
+    private val id: Int,
+    private val biomeName: String,
+    private val type: BiomeType
+) {
     OCEAN(0, "Ocean", BiomeType.NEUTRAL),
     PLAINS(1, "Plains", BiomeType.TEMPERATE),
     DESERT(2, "Desert", BiomeType.HOT),
@@ -67,42 +64,18 @@ public enum Biome {
     SAVANNA_M(163, "Savanna M", BiomeType.HOT),
     SAVANNA_PLATEAU_M(164, "Savanna Plateau M", BiomeType.HOT),
     MESA_BRYCE(165, "Mesa (Bryce)", BiomeType.HOT),
-    MESA_PLATEAU_F_M(166, "Mesa Plateau F M", BiomeType.HOT),
-    MESA_PLATEAU_M(167, "Mesa Plateau M", BiomeType.HOT);
+    MESA_PLATEAU_F_M(166, "Mesa Plateau F M", BiomeType.HOT);
 
-    private static final HashMap<Integer, Biome> fromId;
-    
-    static {
-        fromId = new HashMap<>();
+    fun getId(): Int = id
+    fun getName(): String = biomeName
+    fun getType(): BiomeType = type
 
-        for(Biome biome : Biome.values()){
-            fromId.put(biome.id, biome);
+    companion object {
+        private val fromId: HashMap<Int, Biome> = HashMap<Int, Biome>().apply {
+            for (biome in values()) put(biome.id, biome)
         }
-    }
 
-    private int id;
-    private String name;
-    private BiomeType type;
-
-    Biome(int id, String name, BiomeType type){
-        this.id = id;
-        this.name = name;
-        this.type = type;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BiomeType getType() {
-        return type;
-    }
-
-    public static Biome fromId(int id){
-        return fromId.get(id);
+        @JvmStatic
+        fun fromId(id: Int): Biome? = fromId[id]
     }
 }
