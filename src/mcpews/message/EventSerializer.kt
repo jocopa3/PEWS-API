@@ -15,13 +15,14 @@ open class EventSerializer : JsonSerializer<MCEvent>, JsonDeserializer<MCEvent> 
 
     override fun serialize(
         event: MCEvent?,
-        type: Type,
-        jsc: JsonSerializationContext
+        type: Type?,
+        jsc: JsonSerializationContext?
     ): JsonElement? {
         if (event == null) {
             return null
         }
 
+        val context = jsc!!
         val messageObj = JsonObject()
 
         // Get the class representing the body object from the purpose enum
@@ -29,25 +30,26 @@ open class EventSerializer : JsonSerializer<MCEvent>, JsonDeserializer<MCEvent> 
         val measurementsClassType = eventType.getMeasurementsClassType()
         val propertiesClassType = eventType.getPropertiesClassType()
 
-        messageObj.add("properties", jsc.serialize(event.getProperties(), propertiesClassType))
-        messageObj.add("measurements", jsc.serialize(event.getMeasurements(), measurementsClassType))
-        messageObj.add("eventName", jsc.serialize(eventType.getName()))
+        messageObj.add("properties", context.serialize(event.getProperties(), propertiesClassType))
+        messageObj.add("measurements", context.serialize(event.getMeasurements(), measurementsClassType))
+        messageObj.add("eventName", context.serialize(eventType.getName()))
 
         return messageObj
     }
 
     override fun deserialize(
         je: JsonElement,
-        type: Type,
-        jdc: JsonDeserializationContext
+        type: Type?,
+        jdc: JsonDeserializationContext?
     ): MCEvent {
         val eventObj = je.getAsJsonObject()
         val eventType = EventType.fromString(eventObj.get("eventName").getAsString())!!
+        val context = jdc!!
 
         val properties: EventProperties? =
-            jdc.deserialize<EventProperties>(eventObj.get("properties"), eventType.getPropertiesClassType())
+            context.deserialize<EventProperties>(eventObj.get("properties"), eventType.getPropertiesClassType())
         val measurements: EventMeasurements? =
-            jdc.deserialize<EventMeasurements>(eventObj.get("measurements"), eventType.getMeasurementsClassType())
+            context.deserialize<EventMeasurements>(eventObj.get("measurements"), eventType.getMeasurementsClassType())
 
         return try {
             val eventClass = eventType.getEventClassType()!!

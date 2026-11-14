@@ -22,16 +22,16 @@ open class DebugListener : MCListener {
 
     private val events: ArrayList<EventType> = ArrayList()
 
-    fun addEvent(event: EventType) {
+    open fun addEvent(event: EventType) {
         if (!events.contains(event)) {
             events.add(event)
         }
     }
 
-    override fun onEvent(client: MCClient, message: MCMessage) {
+    override fun onEvent(client: MCClient, eventMessage: MCMessage) {
         MCSocketServer.messageLogger.log(
             LogLevel.DEBUG, "Received event from {0}; ToString: {1}; Message Text: {2}",
-            arrayOf<Any>(client.toString(), message.toString(), message.getMessageText())
+            arrayOf<Any>(client.toString(), eventMessage.toString(), eventMessage.getMessageText())
         )
     }
 
