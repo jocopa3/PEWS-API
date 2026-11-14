@@ -5,7 +5,7 @@ Android / Java-WebSocket 1.6 的兼容改动已回到这份 fork，wrapper 不�
 
 这个模块只负责把源码接入 Android 构建：
 
-- `preparePewsUpstream` 把 `PEWS-API/src` 同步到 `build/pews-upstream-src`
+- `preparePewsUpstream` 把 `../src` 同步到 `build/pews-upstream-src`
 - 排除桌面 GUI / AWT：`ServerGUI`、`TextToBlockListener`、`ChatFormatCode`
 - `src/main/java` 提供 Android 兼容实现：
   - `mcpews.WSEncrypt`：适配 Java-WebSocket 1.6

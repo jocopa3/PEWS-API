@@ -10,7 +10,7 @@ java {
 // PEWS-API fork 已移除桌面 GUI / AWT 依赖，
 // 这里只把上游 src 同步到 build 目录并接入 Android 依赖。
 val preparePewsUpstream = tasks.register<Sync>("preparePewsUpstream") {
-    from("../PEWS-API/src") {
+    from("../src") {
     }
     into(layout.buildDirectory.dir("pews-upstream-src"))
 }
