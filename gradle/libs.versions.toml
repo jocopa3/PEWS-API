@@ -1,0 +1,7 @@
+[versions]
+java-websocket = "1.6.0"
+gson = "2.15.0"
+
+[libraries]
+java-websocket = { module = "org.java-websocket:Java-WebSocket", version.ref = "java-websocket" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

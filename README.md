@@ -1,7 +1,5 @@
 # Pocket Edition WebSocket Server API
 
-[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcodesenlin%2FPEWS-API%2Fmaster%2Fversion.json&query=%24.version&label=version&style=flat-square&color=ff69b4)](https://github.com/codesenlin/PEWS-API)
-
 
 This fork targets Android integration and keeps the API/server core. Desktop Swing GUI listeners are not included.
 
@@ -18,7 +16,7 @@ This is a Gradle Java project; dependencies are managed by Gradle and can be imp
 * [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) `1.6.0`
 * [Gson](https://github.com/google/gson) `2.15.0`
 
-版本号统一由仓库根目录的 `version.json` 提供，Gradle 构建和 README 徽标都读取它。
+依赖版本统一由 `gradle/libs.versions.toml` 管理。
 
 ```bash
 ./gradlew build

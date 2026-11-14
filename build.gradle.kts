@@ -1,13 +1,9 @@
-import groovy.json.JsonSlurper
-
 plugins {
     java
 }
 
-val versionInfo = JsonSlurper().parse(file("version.json")) as Map<*, *>
-
 group = "mcpews"
-version = versionInfo["version"] as String
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -25,8 +21,8 @@ sourceSets {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.15.0")
-    implementation("org.java-websocket:Java-WebSocket:1.6.0")
+    implementation(libs.gson)
+    implementation(libs.java.websocket)
 }
 
 tasks.jar {
