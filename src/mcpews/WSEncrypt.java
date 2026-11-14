@@ -1,11 +1,19 @@
 package mcpews;
 
 import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.drafts.Draft_6455;
+import org.java_websocket.enums.HandshakeState;
 import org.java_websocket.exceptions.InvalidHandshakeException;
 import org.java_websocket.handshake.*;
 
-public class WSEncrypt extends Draft_17 {
+/**
+ * PEWS 的 wsencrypt 握手协议。
+ *
+ * 上游源码针对旧版 Java-WebSocket 编写；这里只做 API 兼容适配：
+ * HandshakeState 从 Draft 内部类迁移到了 enums 包，相关 override 允许抛出
+ * InvalidHandshakeException。
+ */
+public class WSEncrypt extends Draft_6455 {
 
     public static final String WSENCRYPT_PROTOCOL_NAME = "com.microsoft.minecraft.wsencrypt";
 

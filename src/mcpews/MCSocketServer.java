@@ -29,7 +29,7 @@ import mcpews.message.MessagePurposeType;
 import mcpews.message.ResponseSerializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -50,7 +50,7 @@ public class MCSocketServer extends WebSocketServer {
     static {
         drafts = new ArrayList<>();
         drafts.add(new WSEncrypt()); // RFC 6455 with subprotocol com.microsoft.minecraft.wsencrypt; encrypted
-        drafts.add(new Draft_17()); // Default RFC 6455 protocol; no encryption
+        drafts.add(new Draft_6455()); // Default RFC 6455 protocol; no encryption
     }
 
     public MCSocketServer(InetSocketAddress address) {
@@ -58,6 +58,11 @@ public class MCSocketServer extends WebSocketServer {
 
         listeners = new ArrayList<>();
         clients = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public void onStart() {
+        messageLogger.log(Level.INFO, "PEWS server started");
     }
 
     @Override
@@ -90,8 +95,6 @@ public class MCSocketServer extends WebSocketServer {
 
     private JsonParser parser = new JsonParser();
 
-    // TODO: split this function up so it isn't a cluttered mess
-    // TODO: add process queue (if Java-WebSocket doesn't implement one already)
     @Override
     public void onMessage(WebSocket conn, String message) {
         if (message == null) {
@@ -104,10 +107,6 @@ public class MCSocketServer extends WebSocketServer {
         MCClient.ListenerRequest request = null;
 
         MCClient client = clients.get(conn);
-
-        if (client.requiresEncryption()) {
-            //message = client.decryptMessage(message);
-        }
 
         try {
             JsonObject messageJson = parser.parse(message).getAsJsonObject();
@@ -260,10 +259,6 @@ public class MCSocketServer extends WebSocketServer {
         super.run();
     }
 
-    @Override
-    public void onFragment(WebSocket conn, Framedata data) {
-        System.out.println(Arrays.toString(data.getPayloadData().array()));
-    }
 
     public Collection<MCClient> getClients() {
         return clients.values();
