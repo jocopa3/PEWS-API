@@ -1,5 +1,8 @@
 # Pocket Edition WebSocket Server API
 
+[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcodesenlin%2FPEWS-API%2Fmaster%2Fversion.json&query=%24.version&label=version&style=flat-square&color=ff69b4)](https://github.com/codesenlin/PEWS-API)
+
+
 This fork targets Android integration and keeps the API/server core. Desktop Swing GUI listeners are not included.
 
 This API is meant to communicate with the C++ versions of Minecraft, namely Pocket Edition, Windows 10 Edition, and Education Edition using WebSockets. This is not a full multiplayer server, and does not share the same capabilities as multiplayer servers do.
@@ -14,6 +17,8 @@ This is a Gradle Java project; dependencies are managed by Gradle and can be imp
 
 * [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) `1.6.0`
 * [Gson](https://github.com/google/gson) `2.15.0`
+
+版本号统一由仓库根目录的 `version.json` 提供，Gradle 构建和 README 徽标都读取它。
 
 ```bash
 ./gradlew build

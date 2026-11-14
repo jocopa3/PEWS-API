@@ -1,9 +1,13 @@
+import groovy.json.JsonSlurper
+
 plugins {
     java
 }
 
+val versionInfo = JsonSlurper().parse(file("version.json")) as Map<*, *>
+
 group = "mcpews"
-version = "1.0.0"
+version = versionInfo["version"] as String
 
 repositories {
     mavenCentral()
@@ -23,6 +27,12 @@ sourceSets {
 dependencies {
     implementation("com.google.code.gson:gson:2.15.0")
     implementation("org.java-websocket:Java-WebSocket:1.6.0")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Implementation-Version"] = project.version
+    }
 }
 
 // 桌面 Swing/GUI 只在显式开启时参与构建；Android 默认不碰 AWT。
