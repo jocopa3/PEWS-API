@@ -1,7 +1,8 @@
 # Pocket Edition WebSocket Server API
 
+[English](README.md) · [简体中文](README.zh-CN.md)
 
-This fork targets Android integration and keeps the API/server core. Desktop Swing GUI listeners are not included.
+This fork targets Android integration and keeps the API/server core. An optional desktop Swing source set is included, built only when `-Ppews.desktop=true` is passed.
 
 This API is meant to communicate with the C++ versions of Minecraft, namely Pocket Edition, Windows 10 Edition, and Education Edition using WebSockets. This is not a full multiplayer server, and does not share the same capabilities as multiplayer servers do.
 
@@ -9,17 +10,27 @@ Minecraft uses WebSockets to communicate with external programs (such as the Cla
 
 Internally, Minecraft sends JSON messages through the WebSocket to communicate to servers. A basic outline of the JSON structure of each message can be found here: https://gist.github.com/jocopa3/54b42fb6361952997c4a6e38945e306f
 
-# Build
+## Build
 
-This is a Gradle Java project; dependencies are managed by Gradle and can be imported directly into IntelliJ IDEA.
+This is a Gradle Kotlin/JVM project; dependencies are managed by Gradle and can be imported directly into IntelliJ IDEA.
 
 * [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) `1.6.0`
 * [Gson](https://github.com/google/gson) `2.15.0`
 
-依赖版本统一由 `gradle/libs.versions.toml` 管理。
+Dependency versions are managed in `gradle/libs.versions.toml`.
 
 ```bash
 ./gradlew build
 ```
 
-`lib/` 下的本地 jar 已移除。
+The optional desktop Swing artifacts are built with:
+
+```bash
+./gradlew -Ppews.desktop=true desktopJar
+```
+
+The local jars under `lib/` have been removed.
+
+---
+
+[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
