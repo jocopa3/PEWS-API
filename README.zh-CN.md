@@ -1,5 +1,7 @@
 # Pocket Edition WebSocket Server API
 
+[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
+
 [English](README.md) · [简体中文](README.zh-CN.md)
 
 这个 fork 面向 Android 集成，保留 API 与服务器核心；同时包含可选的桌面 Swing source set，只有传入 `-Ppews.desktop=true` 时才会编译。
@@ -30,7 +32,3 @@ Minecraft 内部通过 WebSocket 发送 JSON 消息与服务器通信。每种�
 ```
 
 `lib/` 下的本地 jar 已移除。
-
----
-
-[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)

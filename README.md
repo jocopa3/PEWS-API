@@ -1,5 +1,7 @@
 # Pocket Edition WebSocket Server API
 
+[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
+
 [English](README.md) · [简体中文](README.zh-CN.md)
 
 This fork targets Android integration and keeps the API/server core. An optional desktop Swing source set is included, built only when `-Ppews.desktop=true` is passed.
@@ -30,7 +32,3 @@ The optional desktop Swing artifacts are built with:
 ```
 
 The local jars under `lib/` have been removed.
-
----
-
-[![](https://img.shields.io/badge/powered_by-dsh-4D6BFE?style=flat-square&logo=deepseek&logoColor=white)](https://github.com/deepseek-ai/deepseek-harness)
