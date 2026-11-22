@@ -7,3 +7,8 @@ nbdist/
 .nb-gradle/
 /src/mcpews/listeners/ServerGUIFX.java
 /src/resources/fxml/ServerGUI.fxml
+.gradle/
+.idea/
+out/
+*.iml
+bin/
